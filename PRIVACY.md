@@ -8,6 +8,7 @@ MuseDock Open is designed as a local-first desktop app.
 - API keys are stored in the operating system keychain.
 - Chat conversations are stored in the app data directory.
 - Generated images are saved in the app data directory.
+- Generated image history metadata is stored in the app data directory.
 
 ## What Leaves Your Device
 
@@ -48,6 +49,7 @@ Files may include:
 
 - `providers.json`
 - `conversations.json`
+- `generated-images.json`
 - `generated-images/`
 
 ## Telemetry

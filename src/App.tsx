@@ -82,6 +82,10 @@ export default function App() {
         setActiveConversationId(items[0]?.id || null);
       })
       .catch((error) => setStatus(String(error)));
+    localApi
+      .loadGeneratedImages()
+      .then(setGeneratedImages)
+      .catch((error) => setStatus(String(error)));
   }, []);
 
   const upsertProviderState = (saved: ProviderConfig) => {
@@ -357,6 +361,21 @@ export default function App() {
     }
   };
 
+  const deleteGeneratedImage = async (image: GeneratedImage) => {
+    if (!window.confirm(`删除图片「${image.file_name}」？`)) return;
+    setBusy(true);
+    setStatus("");
+    try {
+      await localApi.deleteGeneratedImage(image.id);
+      setGeneratedImages((current) => current.filter((item) => item.id !== image.id));
+      setStatus("图片已删除");
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -534,14 +553,27 @@ export default function App() {
                 </div>
               ) : (
                 generatedImages.map((image) => (
-                  <article className="image-card" key={image.path}>
+                  <article className="image-card" key={image.id}>
                     <img src={convertFileSrc(image.path)} alt={image.file_name} />
                     <div>
                       <strong>{image.file_name}</strong>
-                      <button onClick={() => copyText(image.path)} type="button">
-                        <Copy size={14} />
-                        Copy path
-                      </button>
+                      <p title={image.prompt}>{image.prompt}</p>
+                      <span>{image.model} / {image.size}</span>
+                      <div className="image-card-actions">
+                        <button onClick={() => copyText(image.path)} type="button">
+                          <Copy size={14} />
+                          Copy path
+                        </button>
+                        <button
+                          className="danger-text-button"
+                          disabled={busy}
+                          onClick={() => deleteGeneratedImage(image)}
+                          type="button"
+                        >
+                          <Trash2 size={14} />
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </article>
                 ))

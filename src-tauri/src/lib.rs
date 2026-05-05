@@ -28,6 +28,8 @@ pub fn run() {
             commands::send_chat_message,
             commands::send_chat_message_stream,
             commands::generate_images,
+            commands::load_generated_images,
+            commands::delete_generated_image,
             commands::load_conversations,
             commands::save_conversation,
             commands::delete_conversation,

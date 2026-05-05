@@ -434,6 +434,29 @@ button {
   white-space: nowrap;
 }
 
+.image-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: #475467;
+  font-size: 13px;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.image-card span {
+  color: #667085;
+  font-size: 12px;
+}
+
+.image-card-actions {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px !important;
+  padding: 0 !important;
+}
+
 .image-card button {
   display: inline-flex;
   align-items: center;
@@ -445,6 +468,15 @@ button {
   background: #ffffff;
   color: #174ea6;
   font-weight: 700;
+}
+
+.image-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.image-card button.danger-text-button {
+  color: #b42318;
 }
 
 .settings-panel {

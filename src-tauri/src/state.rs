@@ -20,4 +20,8 @@ impl AppState {
     pub fn conversations_path(&self) -> PathBuf {
         self.app_data_dir.join("conversations.json")
     }
+
+    pub fn generated_images_path(&self) -> PathBuf {
+        self.app_data_dir.join("generated-images.json")
+    }
 }

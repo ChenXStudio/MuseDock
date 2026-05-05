@@ -49,9 +49,15 @@ export interface GenerateImageRequest {
 }
 
 export interface GeneratedImage {
+  id: string;
   path: string;
   file_name: string;
   mime_type: string;
+  prompt: string;
+  model: string;
+  size: string;
+  provider_id: string;
+  created_at: string;
 }
 
 export const localApi = {
@@ -72,6 +78,9 @@ export const localApi = {
     invoke<void>("send_chat_message_stream", { requestId, providerId, messages }),
   generateImages: (request: GenerateImageRequest) =>
     invoke<GeneratedImage[]>("generate_images", { request }),
+  loadGeneratedImages: () => invoke<GeneratedImage[]>("load_generated_images"),
+  deleteGeneratedImage: (imageId: string) =>
+    invoke<void>("delete_generated_image", { imageId }),
   loadConversations: () => invoke<Conversation[]>("load_conversations"),
   saveConversation: (conversation: Conversation) =>
     invoke<void>("save_conversation", { conversation }),

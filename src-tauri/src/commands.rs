@@ -128,9 +128,15 @@ pub struct GenerateImageRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GeneratedImage {
+    pub id: String,
     pub path: String,
     pub file_name: String,
     pub mime_type: String,
+    pub prompt: String,
+    pub model: String,
+    pub size: String,
+    pub provider_id: String,
+    pub created_at: String,
 }
 
 fn default_image_count() -> u8 {
@@ -293,7 +299,36 @@ pub async fn generate_images(
 ) -> Result<Vec<GeneratedImage>, String> {
     validate_image_request(&request)?;
     let config = select_provider_config(state.inner(), Some(request.provider_id.clone())).await?;
-    call_image_generation(state.inner(), &config, &request).await
+    let images = call_image_generation(state.inner(), &config, &request).await?;
+    let mut history = read_generated_images(&state).await?;
+    history.splice(0..0, images.clone());
+    write_generated_images(&state, &history).await?;
+    Ok(images)
+}
+
+#[tauri::command]
+pub async fn load_generated_images(
+    state: State<'_, AppState>,
+) -> Result<Vec<GeneratedImage>, String> {
+    read_generated_images(&state).await
+}
+
+#[tauri::command]
+pub async fn delete_generated_image(
+    state: State<'_, AppState>,
+    image_id: String,
+) -> Result<(), String> {
+    let mut images = read_generated_images(&state).await?;
+    let Some(image) = images.iter().find(|item| item.id == image_id).cloned() else {
+        return Ok(());
+    };
+    images.retain(|item| item.id != image_id);
+    write_generated_images(&state, &images).await?;
+    match tokio::fs::remove_file(&image.path).await {
+        Ok(()) => Ok(()),
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(err) => Err(format!("删除图片文件失败: {err}")),
+    }
 }
 
 #[tauri::command]
@@ -716,10 +751,17 @@ async fn call_image_generation(
         tokio::fs::write(&path, bytes)
             .await
             .map_err(|err| format!("保存图片失败: {err}"))?;
+        let created_at = unix_millis()?.to_string();
         images.push(GeneratedImage {
+            id: format!("{}-{}", created_at, index + 1),
             path: path.to_string_lossy().to_string(),
             file_name,
             mime_type,
+            prompt: request.prompt.trim().to_string(),
+            model: request.model.trim().to_string(),
+            size: request.size.trim().to_string(),
+            provider_id: config.id.clone(),
+            created_at,
         });
     }
 
@@ -842,4 +884,30 @@ async fn write_conversations(
     tokio::fs::write(path, content)
         .await
         .map_err(|err| format!("保存会话失败: {err}"))
+}
+
+async fn read_generated_images(state: &State<'_, AppState>) -> Result<Vec<GeneratedImage>, String> {
+    let path = state.generated_images_path();
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+    let content = tokio::fs::read_to_string(path)
+        .await
+        .map_err(|err| format!("读取图片历史失败: {err}"))?;
+    if content.trim().is_empty() {
+        return Ok(Vec::new());
+    }
+    serde_json::from_str(&content).map_err(|err| format!("解析图片历史失败: {err}"))
+}
+
+async fn write_generated_images(
+    state: &State<'_, AppState>,
+    images: &[GeneratedImage],
+) -> Result<(), String> {
+    let path = state.generated_images_path();
+    let content =
+        serde_json::to_string_pretty(images).map_err(|err| format!("序列化图片历史失败: {err}"))?;
+    tokio::fs::write(path, content)
+        .await
+        .map_err(|err| format!("保存图片历史失败: {err}"))
 }

@@ -14,6 +14,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - Provider-specific API keys stored in the system keychain.
 - OpenAI-compatible `/images/generations` support.
 - Generated images saved to the local app data directory.
+- Generated image history persisted locally.
 
 ## Privacy Model
 
@@ -24,6 +25,7 @@ MuseDock Open does not require a MuseDock server.
 - API keys are stored in the operating system keychain, not in `providers.json`.
 - Conversations are stored locally in `conversations.json`.
 - Generated images are saved locally under `generated-images`.
+- Generated image metadata is stored locally in `generated-images.json`.
 - The app does not add telemetry or analytics.
 
 See [PRIVACY.md](./PRIVACY.md) for details.
@@ -101,6 +103,7 @@ Files:
 - `providers.json`: provider profile metadata. API keys are not stored here.
 - `provider.json`: legacy single-provider metadata, read for compatibility.
 - `conversations.json`: local chat history.
+- `generated-images.json`: local generated image history metadata.
 - `generated-images/`: locally saved generated images.
 
 To reset local app data, quit the app and remove the app data directory. API keys may also need to be removed from the system keychain.
@@ -132,6 +135,7 @@ Before publishing a release:
 - Markdown and code blocks render correctly.
 - Conversations survive app restart.
 - Image generation saves files under `generated-images`.
+- Image history survives app restart.
 - `npm run build` passes.
 - `cargo check` passes in `src-tauri`.
 - `cargo fmt --check` passes in `src-tauri`.
