@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="MuseDock Open icon">
+  <rect width="1024" height="1024" rx="220" fill="#1f6feb"/>
+  <rect x="182" y="172" width="124" height="680" rx="42" fill="#ffffff"/>
+  <rect x="718" y="172" width="124" height="680" rx="42" fill="#ffffff"/>
+  <path d="M306 172h116l90 292 90-292h116v680H600V472l-58 174h-60l-58-174v380H306V172z" fill="#eaf4ff"/>
+  <rect x="268" y="742" width="488" height="88" rx="44" fill="#7dd3fc"/>
+</svg>

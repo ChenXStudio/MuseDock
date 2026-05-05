@@ -110,10 +110,12 @@ To reset local app data, quit the app and remove the app data directory. API key
 
 ## Release Build
 
+See [docs/RELEASE.md](./docs/RELEASE.md) for the full macOS and Windows release process.
+
 Create a desktop bundle:
 
 ```bash
-npm run tauri build
+npm run tauri:build
 ```
 
 Build output is written under `src-tauri/target/release/bundle`.

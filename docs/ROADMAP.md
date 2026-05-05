@@ -104,3 +104,33 @@ Acceptance:
 - Contributing guide added.
 - Privacy note added.
 - Release build instructions added.
+
+## Phase 2: Release Readiness
+
+Phase 2 prepares MuseDock Open for downloadable pre-release builds.
+
+## Task 9: App Identity & Icon
+
+Status: done.
+
+Acceptance:
+
+- App name remains `MuseDock Open`.
+- App identifier remains `app.musedock.open`.
+- Version remains `0.1.0`.
+- macOS `.icns` icon is configured.
+- Windows `.ico` icon is configured.
+- Icon source is kept in the repository.
+
+## Task 10: Release Build Documentation
+
+Status: done.
+
+Acceptance:
+
+- `CHANGELOG.md` added.
+- `docs/RELEASE.md` added.
+- macOS build steps documented.
+- Windows build steps reserved and documented.
+- Unsigned build limitations documented.
+- Local macOS `.app` and `.dmg` build verified.
