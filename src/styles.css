@@ -610,6 +610,33 @@ button {
   text-overflow: ellipsis;
 }
 
+.settings-summary em {
+  color: #667085;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.inline-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.inline-actions button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #cfd6e2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #174ea6;
+  font-weight: 700;
+}
+
+.inline-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .data-list {
   display: grid;
   gap: 10px;

@@ -25,6 +25,10 @@ impl AppState {
         self.app_data_dir.join("generated-images.json")
     }
 
+    pub fn image_settings_path(&self) -> PathBuf {
+        self.app_data_dir.join("image-settings.json")
+    }
+
     pub fn exports_dir(&self) -> PathBuf {
         self.app_data_dir.join("exports")
     }

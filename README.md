@@ -16,6 +16,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - OpenAI-compatible `/images/generations` support.
 - Generated images saved to the local app data directory.
 - Generated image history persisted locally.
+- Optional custom folder for newly generated images.
 
 ## Privacy Model
 
@@ -105,6 +106,7 @@ Files:
 - `provider.json`: legacy single-provider metadata, read for compatibility.
 - `conversations.json`: local chat history.
 - `generated-images.json`: local generated image history metadata.
+- `image-settings.json`: image save folder preference.
 - `generated-images/`: locally saved generated images.
 - `exports/`: Markdown conversation exports.
 

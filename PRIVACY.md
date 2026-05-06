@@ -9,6 +9,7 @@ MuseDock Open is designed as a local-first desktop app.
 - Chat conversations are stored in the app data directory.
 - Generated images are saved in the app data directory.
 - Generated image history metadata is stored in the app data directory.
+- If you choose a custom image folder, new generated image files are saved there.
 - Markdown conversation exports are saved in the app data directory when requested.
 
 ## What Leaves Your Device
@@ -51,6 +52,7 @@ Files may include:
 - `providers.json`
 - `conversations.json`
 - `generated-images.json`
+- `image-settings.json`
 - `generated-images/`
 - `exports/`
 

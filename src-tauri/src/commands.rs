@@ -145,6 +145,14 @@ pub struct ExportedFile {
     pub file_name: String,
 }
 
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ImageSettings {
+    #[serde(default)]
+    pub save_dir: String,
+    #[serde(default)]
+    pub using_default_dir: bool,
+}
+
 fn default_image_count() -> u8 {
     1
 }
@@ -335,6 +343,37 @@ pub async fn delete_generated_image(
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
         Err(err) => Err(format!("删除图片文件失败: {err}")),
     }
+}
+
+#[tauri::command]
+pub async fn load_image_settings(state: State<'_, AppState>) -> Result<ImageSettings, String> {
+    let mut settings = read_image_settings(&state).await?;
+    if settings.save_dir.trim().is_empty() {
+        settings.save_dir = default_image_dir(state.inner())
+            .to_string_lossy()
+            .to_string();
+        settings.using_default_dir = true;
+    }
+    Ok(settings)
+}
+
+#[tauri::command]
+pub async fn save_image_settings(
+    state: State<'_, AppState>,
+    mut settings: ImageSettings,
+) -> Result<ImageSettings, String> {
+    settings.save_dir = settings.save_dir.trim().to_string();
+    settings.using_default_dir = settings.save_dir.is_empty();
+    let target_dir = if settings.using_default_dir {
+        default_image_dir(state.inner())
+    } else {
+        settings.save_dir.clone().into()
+    };
+    tokio::fs::create_dir_all(&target_dir)
+        .await
+        .map_err(|err| format!("创建图片保存目录失败: {err}"))?;
+    write_image_settings(&state, &settings).await?;
+    load_image_settings(state).await
 }
 
 #[tauri::command]
@@ -798,7 +837,7 @@ async fn call_image_generation(
         return Err("图片 Provider 没有返回图片".to_string());
     }
 
-    let image_dir = state.app_data_dir.join("generated-images");
+    let image_dir = resolve_image_save_dir(state).await?;
     tokio::fs::create_dir_all(&image_dir)
         .await
         .map_err(|err| format!("创建图片目录失败: {err}"))?;
@@ -840,6 +879,19 @@ async fn call_image_generation(
     }
 
     Ok(images)
+}
+
+fn default_image_dir(state: &AppState) -> std::path::PathBuf {
+    state.app_data_dir.join("generated-images")
+}
+
+async fn resolve_image_save_dir(state: &AppState) -> Result<std::path::PathBuf, String> {
+    let settings = read_image_settings_from_state(state).await?;
+    if settings.save_dir.trim().is_empty() {
+        Ok(default_image_dir(state))
+    } else {
+        Ok(settings.save_dir.into())
+    }
 }
 
 async fn download_image_url(
@@ -984,4 +1036,34 @@ async fn write_generated_images(
     tokio::fs::write(path, content)
         .await
         .map_err(|err| format!("保存图片历史失败: {err}"))
+}
+
+async fn read_image_settings(state: &State<'_, AppState>) -> Result<ImageSettings, String> {
+    read_image_settings_from_state(state.inner()).await
+}
+
+async fn read_image_settings_from_state(state: &AppState) -> Result<ImageSettings, String> {
+    let path = state.image_settings_path();
+    if !path.exists() {
+        return Ok(ImageSettings::default());
+    }
+    let content = tokio::fs::read_to_string(path)
+        .await
+        .map_err(|err| format!("读取图片设置失败: {err}"))?;
+    if content.trim().is_empty() {
+        return Ok(ImageSettings::default());
+    }
+    serde_json::from_str(&content).map_err(|err| format!("解析图片设置失败: {err}"))
+}
+
+async fn write_image_settings(
+    state: &State<'_, AppState>,
+    settings: &ImageSettings,
+) -> Result<(), String> {
+    let path = state.image_settings_path();
+    let content = serde_json::to_string_pretty(settings)
+        .map_err(|err| format!("序列化图片设置失败: {err}"))?;
+    tokio::fs::write(path, content)
+        .await
+        .map_err(|err| format!("保存图片设置失败: {err}"))
 }

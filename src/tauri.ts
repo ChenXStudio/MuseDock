@@ -65,6 +65,11 @@ export interface ExportedFile {
   file_name: string;
 }
 
+export interface ImageSettings {
+  save_dir: string;
+  using_default_dir: boolean;
+}
+
 export const localApi = {
   getAppDataDir: () => invoke<string>("get_app_data_dir"),
   loadProviderConfig: () => invoke<ProviderConfig>("load_provider_config"),
@@ -86,6 +91,9 @@ export const localApi = {
   loadGeneratedImages: () => invoke<GeneratedImage[]>("load_generated_images"),
   deleteGeneratedImage: (imageId: string) =>
     invoke<void>("delete_generated_image", { imageId }),
+  loadImageSettings: () => invoke<ImageSettings>("load_image_settings"),
+  saveImageSettings: (settings: ImageSettings) =>
+    invoke<ImageSettings>("save_image_settings", { settings }),
   loadConversations: () => invoke<Conversation[]>("load_conversations"),
   saveConversation: (conversation: Conversation) =>
     invoke<void>("save_conversation", { conversation }),

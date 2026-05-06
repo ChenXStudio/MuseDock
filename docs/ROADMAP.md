@@ -198,3 +198,15 @@ Acceptance:
 - Exported file is Markdown.
 - Export is written to the local app data directory.
 - API keys and provider secrets are not included.
+
+## Task 16: Configurable Image Save Folder
+
+Status: done.
+
+Acceptance:
+
+- Image settings show the current save folder.
+- User can choose a custom image save folder.
+- User can return to the default image folder.
+- New generated images use the configured folder.
+- Existing image history keeps original paths.

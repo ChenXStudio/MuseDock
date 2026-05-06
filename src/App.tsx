@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { open } from "@tauri-apps/plugin-dialog";
 import { Bot, Check, Copy, Database, Image, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -39,6 +40,8 @@ export default function App() {
   const [imageModel, setImageModel] = useState("gpt-image-1");
   const [imageSize, setImageSize] = useState("1024x1024");
   const [imageCount, setImageCount] = useState(1);
+  const [imageSaveDir, setImageSaveDir] = useState("");
+  const [usingDefaultImageDir, setUsingDefaultImageDir] = useState(true);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
@@ -99,6 +102,13 @@ export default function App() {
     localApi
       .loadGeneratedImages()
       .then(setGeneratedImages)
+      .catch((error) => setStatus(String(error)));
+    localApi
+      .loadImageSettings()
+      .then((settings) => {
+        setImageSaveDir(settings.save_dir);
+        setUsingDefaultImageDir(settings.using_default_dir);
+      })
       .catch((error) => setStatus(String(error)));
   }, []);
 
@@ -396,6 +406,48 @@ export default function App() {
       await localApi.deleteGeneratedImage(image.id);
       setGeneratedImages((current) => current.filter((item) => item.id !== image.id));
       setStatus("图片已删除");
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const chooseImageSaveDir = async () => {
+    const selected = await open({
+      directory: true,
+      multiple: false,
+      title: "Choose image save folder",
+    });
+    if (!selected || Array.isArray(selected)) return;
+    setBusy(true);
+    setStatus("");
+    try {
+      const settings = await localApi.saveImageSettings({
+        save_dir: selected,
+        using_default_dir: false,
+      });
+      setImageSaveDir(settings.save_dir);
+      setUsingDefaultImageDir(settings.using_default_dir);
+      setStatus("图片保存目录已更新");
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const resetImageSaveDir = async () => {
+    setBusy(true);
+    setStatus("");
+    try {
+      const settings = await localApi.saveImageSettings({
+        save_dir: "",
+        using_default_dir: true,
+      });
+      setImageSaveDir(settings.save_dir);
+      setUsingDefaultImageDir(settings.using_default_dir);
+      setStatus("图片保存目录已恢复默认");
     } catch (error) {
       setStatus(String(error));
     } finally {
@@ -783,6 +835,19 @@ export default function App() {
                     <h2>Images</h2>
                     <p>Set the default image model and size used by the Images page.</p>
                   </div>
+                  <div className="settings-summary">
+                    <strong>Save folder</strong>
+                    <span title={imageSaveDir}>{imageSaveDir || "Resolving default folder..."}</span>
+                    <em>{usingDefaultImageDir ? "Default app data folder" : "Custom folder"}</em>
+                    <div className="inline-actions">
+                      <button onClick={chooseImageSaveDir} disabled={busy} type="button">
+                        Choose folder
+                      </button>
+                      <button onClick={resetImageSaveDir} disabled={busy || usingDefaultImageDir} type="button">
+                        Use default
+                      </button>
+                    </div>
+                  </div>
                   <label>
                     Image model
                     <input
@@ -813,7 +878,7 @@ export default function App() {
                       value={imageCount}
                     />
                   </label>
-                  <p className="note">These defaults are kept in the current app session. Generated image files and history are saved locally.</p>
+                  <p className="note">New images are saved to the selected folder. Existing image history keeps its original file paths.</p>
                 </>
               )}
 
@@ -843,7 +908,7 @@ export default function App() {
                     </div>
                     <div>
                       <strong>Generated images</strong>
-                      <span>{generatedImages.length} local image record{generatedImages.length === 1 ? "" : "s"}.</span>
+                      <span>{generatedImages.length} local image record{generatedImages.length === 1 ? "" : "s"}. New files save to {imageSaveDir || "the default image folder"}.</span>
                     </div>
                   </div>
                 </>
