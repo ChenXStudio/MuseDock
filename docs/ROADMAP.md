@@ -150,11 +150,13 @@ Acceptance:
 
 ## Task 12: First Pre-release Preparation
 
-Status: ready for maintainer confirmation.
+Status: done.
 
 Acceptance:
 
 - `v0.1.0` release note draft prepared.
 - macOS `.dmg` artifact confirmed.
 - Windows artifact marked pending until built on Windows.
-- Tag creation left for maintainer confirmation.
+- `v0.1.0` tag created and pushed.
+- GitHub pre-release created.
+- macOS `.dmg` uploaded.
