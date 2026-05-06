@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import { ChatMessage, ChatStreamEvent, Conversation, GeneratedImage, PersistedMessage, ProviderConfig, localApi } from "./tauri";
 
 type View = "chat" | "images" | "settings";
+type SettingsSection = "provider" | "chat" | "images" | "data";
 
 const defaultSystemPrompt =
   "You are MuseDock Open, a concise and practical AI assistant.";
@@ -27,6 +28,7 @@ function createId() {
 
 export default function App() {
   const [view, setView] = useState<View>("chat");
+  const [settingsSection, setSettingsSection] = useState<SettingsSection>("provider");
   const [providers, setProviders] = useState<ProviderConfig[]>([defaultConfig]);
   const [provider, setProvider] = useState<ProviderConfig>(defaultConfig);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -54,13 +56,13 @@ export default function App() {
   );
   const messages = activeConversation?.messages || [];
   const pageTitle =
-    view === "chat" ? "Chat" : view === "images" ? "Images" : "Provider Settings";
+    view === "chat" ? "Chat" : view === "images" ? "Images" : "Settings";
   const pageDescription =
     view === "chat"
       ? `Using ${provider.name || "provider"} / ${provider.chat_model || "model not set"}`
       : view === "images"
         ? `Using ${provider.name || "provider"} / ${imageModel || "image model not set"}`
-        : "Configure OpenAI-compatible endpoints. No MuseDock server required.";
+        : settingsDescription(settingsSection);
 
   useEffect(() => {
     localApi
@@ -581,97 +583,230 @@ export default function App() {
             </div>
           </section>
         ) : (
-          <section className="settings-panel">
-            <div className="provider-toolbar">
-              <label>
-                Provider profile
-                <select
-                  value={provider.id}
-                  onChange={(event) => selectProvider(event.target.value)}
-                >
-                  {providers.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name || "Unnamed Provider"}
-                      {item.is_default ? " (default)" : ""}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="provider-buttons">
-                <button onClick={addProvider} type="button">
-                  <Plus size={17} />
-                  Add
-                </button>
-                <button
-                  className="danger"
-                  onClick={deleteProvider}
-                  disabled={busy || providers.length <= 1}
-                  type="button"
-                >
-                  <Trash2 size={17} />
-                  Delete
-                </button>
-              </div>
+          <section className="settings-layout">
+            <aside className="settings-menu">
+              <button
+                className={settingsSection === "provider" ? "active" : ""}
+                onClick={() => setSettingsSection("provider")}
+                type="button"
+              >
+                <KeyRound size={17} />
+                Provider
+              </button>
+              <button
+                className={settingsSection === "chat" ? "active" : ""}
+                onClick={() => setSettingsSection("chat")}
+                type="button"
+              >
+                <Bot size={17} />
+                Chat
+              </button>
+              <button
+                className={settingsSection === "images" ? "active" : ""}
+                onClick={() => setSettingsSection("images")}
+                type="button"
+              >
+                <Image size={17} />
+                Images
+              </button>
+              <button
+                className={settingsSection === "data" ? "active" : ""}
+                onClick={() => setSettingsSection("data")}
+                type="button"
+              >
+                <Database size={17} />
+                Data & Privacy
+              </button>
+            </aside>
+
+            <div className="settings-panel">
+              {settingsSection === "provider" && (
+                <>
+                  <div className="settings-heading">
+                    <h2>Provider</h2>
+                    <p>Choose the service MuseDock uses for chat and image requests.</p>
+                  </div>
+                  <div className="provider-toolbar">
+                    <label>
+                      Provider profile
+                      <select
+                        value={provider.id}
+                        onChange={(event) => selectProvider(event.target.value)}
+                      >
+                        {providers.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.name || "Unnamed Provider"}
+                            {item.is_default ? " (default)" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <div className="provider-buttons">
+                      <button onClick={addProvider} type="button">
+                        <Plus size={17} />
+                        Add
+                      </button>
+                      <button
+                        className="danger"
+                        onClick={deleteProvider}
+                        disabled={busy || providers.length <= 1}
+                        type="button"
+                      >
+                        <Trash2 size={17} />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                  <label>
+                    Provider name
+                    <input
+                      value={provider.name}
+                      onChange={(event) => setProvider({ ...provider, name: event.target.value })}
+                    />
+                  </label>
+                  <label>
+                    Base URL
+                    <input
+                      value={provider.base_url}
+                      onChange={(event) => setProvider({ ...provider, base_url: event.target.value })}
+                      placeholder="https://api.openai.com/v1"
+                    />
+                  </label>
+                  <label>
+                    API Key
+                    <input
+                      value={provider.api_key}
+                      onChange={(event) => setProvider({ ...provider, api_key: event.target.value })}
+                      type="password"
+                      placeholder={provider.has_api_key ? "Saved in system keychain" : "sk-..."}
+                    />
+                  </label>
+                  {provider.has_api_key && !provider.api_key && (
+                    <p className="key-status">已保存的 API Key 不会明文回填。输入新 Key 可覆盖。</p>
+                  )}
+                  <label className="checkbox-row">
+                    <input
+                      checked={provider.is_default}
+                      onChange={(event) => setProvider({ ...provider, is_default: event.target.checked })}
+                      type="checkbox"
+                    />
+                    Use as default provider
+                  </label>
+                  <div className="actions">
+                    <button onClick={saveProvider} disabled={busy} type="button">
+                      <Check size={18} />
+                      Save
+                    </button>
+                    <button onClick={testProvider} disabled={busy} type="button">
+                      {busy ? <Loader2 size={18} className="spin" /> : <Bot size={18} />}
+                      Test
+                    </button>
+                    <button className="danger" onClick={clearApiKey} disabled={busy || !provider.has_api_key} type="button">
+                      Clear key
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {settingsSection === "chat" && (
+                <>
+                  <div className="settings-heading">
+                    <h2>Chat</h2>
+                    <p>Set the chat model for the selected provider.</p>
+                  </div>
+                  <label>
+                    Chat model
+                    <input
+                      value={provider.chat_model}
+                      onChange={(event) => setProvider({ ...provider, chat_model: event.target.value })}
+                      placeholder="gpt-4.1-mini"
+                    />
+                  </label>
+                  <div className="settings-summary">
+                    <strong>Current provider</strong>
+                    <span>{provider.name || "Unnamed Provider"}</span>
+                  </div>
+                  <div className="actions">
+                    <button onClick={saveProvider} disabled={busy} type="button">
+                      <Check size={18} />
+                      Save
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {settingsSection === "images" && (
+                <>
+                  <div className="settings-heading">
+                    <h2>Images</h2>
+                    <p>Set the default image model and size used by the Images page.</p>
+                  </div>
+                  <label>
+                    Image model
+                    <input
+                      value={imageModel}
+                      onChange={(event) => setImageModel(event.target.value)}
+                      placeholder="gpt-image-1"
+                    />
+                  </label>
+                  <label>
+                    Default size
+                    <select
+                      value={imageSize}
+                      onChange={(event) => setImageSize(event.target.value)}
+                    >
+                      <option value="1024x1024">1024x1024</option>
+                      <option value="1024x1536">1024x1536</option>
+                      <option value="1536x1024">1536x1024</option>
+                      <option value="512x512">512x512</option>
+                    </select>
+                  </label>
+                  <label>
+                    Default count
+                    <input
+                      max={4}
+                      min={1}
+                      onChange={(event) => setImageCount(Number(event.target.value))}
+                      type="number"
+                      value={imageCount}
+                    />
+                  </label>
+                  <p className="note">These defaults are kept in the current app session. Generated image files and history are saved locally.</p>
+                </>
+              )}
+
+              {settingsSection === "data" && (
+                <>
+                  <div className="settings-heading">
+                    <h2>Data & Privacy</h2>
+                    <p>Review where MuseDock stores local data and what is kept out of normal files.</p>
+                  </div>
+                  <div className="data-list">
+                    <div>
+                      <strong>App data directory</strong>
+                      <button onClick={() => copyText(appDataDir)} type="button">Copy path</button>
+                      <span title={appDataDir}>{appDataDir || "Not resolved yet"}</span>
+                    </div>
+                    <div>
+                      <strong>Provider profiles</strong>
+                      <span>Saved in providers.json without API keys.</span>
+                    </div>
+                    <div>
+                      <strong>API keys</strong>
+                      <span>Saved in the system keychain per provider.</span>
+                    </div>
+                    <div>
+                      <strong>Conversations</strong>
+                      <span>{conversations.length} local conversation{conversations.length === 1 ? "" : "s"}.</span>
+                    </div>
+                    <div>
+                      <strong>Generated images</strong>
+                      <span>{generatedImages.length} local image record{generatedImages.length === 1 ? "" : "s"}.</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-            <label>
-              Provider name
-              <input
-                value={provider.name}
-                onChange={(event) => setProvider({ ...provider, name: event.target.value })}
-              />
-            </label>
-            <label>
-              Base URL
-              <input
-                value={provider.base_url}
-                onChange={(event) => setProvider({ ...provider, base_url: event.target.value })}
-                placeholder="https://api.openai.com/v1"
-              />
-            </label>
-            <label>
-              API Key
-              <input
-                value={provider.api_key}
-                onChange={(event) => setProvider({ ...provider, api_key: event.target.value })}
-                type="password"
-                placeholder={provider.has_api_key ? "Saved in system keychain" : "sk-..."}
-              />
-            </label>
-            {provider.has_api_key && !provider.api_key && (
-              <p className="key-status">已保存的 API Key 不会明文回填。输入新 Key 可覆盖。</p>
-            )}
-            <label>
-              Chat model
-              <input
-                value={provider.chat_model}
-                onChange={(event) => setProvider({ ...provider, chat_model: event.target.value })}
-                placeholder="gpt-4.1-mini"
-              />
-            </label>
-            <label className="checkbox-row">
-              <input
-                checked={provider.is_default}
-                onChange={(event) => setProvider({ ...provider, is_default: event.target.checked })}
-                type="checkbox"
-              />
-              Use as default provider
-            </label>
-            <div className="actions">
-              <button onClick={saveProvider} disabled={busy} type="button">
-                <Check size={18} />
-                Save
-              </button>
-              <button onClick={testProvider} disabled={busy} type="button">
-                {busy ? <Loader2 size={18} className="spin" /> : <Bot size={18} />}
-                Test
-              </button>
-              <button className="danger" onClick={clearApiKey} disabled={busy || !provider.has_api_key} type="button">
-                Clear key
-              </button>
-            </div>
-            <p className="note">
-              Provider 的非敏感配置保存在本机应用数据目录。API Key 按 Provider 分别保存在系统钥匙串，不写入 providers.json。
-            </p>
           </section>
         )}
       </main>
@@ -683,6 +818,19 @@ function makeTitle(text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
   if (!normalized) return "New chat";
   return normalized.length > 28 ? `${normalized.slice(0, 28)}...` : normalized;
+}
+
+function settingsDescription(section: SettingsSection) {
+  switch (section) {
+    case "provider":
+      return "Connect MuseDock to the AI service you want to use.";
+    case "chat":
+      return "Choose the model used for conversations.";
+    case "images":
+      return "Set simple defaults for image generation.";
+    case "data":
+      return "Review local files, key storage, and privacy boundaries.";
+  }
 }
 
 function updateAssistantMessage(

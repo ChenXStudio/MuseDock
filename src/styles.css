@@ -479,13 +479,63 @@ button {
   color: #b42318;
 }
 
+.settings-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 680px);
+  gap: 18px;
+  align-items: start;
+  padding: 24px;
+}
+
+.settings-menu {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid #dfe3ea;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.settings-menu button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #344054;
+  font-weight: 700;
+  text-align: left;
+}
+
+.settings-menu button.active,
+.settings-menu button:hover {
+  background: #edf4ff;
+  color: #174ea6;
+}
+
 .settings-panel {
-  width: min(640px, calc(100% - 48px));
-  margin: 24px;
   padding: 22px;
   border: 1px solid #dfe3ea;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #ffffff;
+}
+
+.settings-heading {
+  margin-bottom: 18px;
+}
+
+.settings-heading h2 {
+  margin: 0 0 5px;
+  font-size: 18px;
+}
+
+.settings-heading p {
+  margin: 0;
+  color: #667085;
+  font-size: 13px;
 }
 
 .settings-panel label {
@@ -501,6 +551,55 @@ button {
   display: block;
   margin-top: 7px;
   padding: 10px 12px;
+}
+
+.settings-summary {
+  display: grid;
+  gap: 4px;
+  margin: 4px 0 16px;
+  padding: 12px;
+  border: 1px solid #dfe3ea;
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+.settings-summary strong,
+.data-list strong {
+  color: #344054;
+  font-size: 13px;
+}
+
+.settings-summary span,
+.data-list span {
+  overflow: hidden;
+  color: #667085;
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
+
+.data-list {
+  display: grid;
+  gap: 10px;
+}
+
+.data-list > div {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid #dfe3ea;
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+.data-list button {
+  justify-self: start;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #cfd6e2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #174ea6;
+  font-weight: 700;
 }
 
 .provider-toolbar {

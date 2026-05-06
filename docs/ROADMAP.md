@@ -160,3 +160,19 @@ Acceptance:
 - `v0.1.0` tag created and pushed.
 - GitHub pre-release created.
 - macOS `.dmg` uploaded.
+
+## Phase 3: Product UX
+
+Phase 3 improves everyday usability without exposing advanced AI parameters in the main flow.
+
+## Task 13: Settings Information Architecture
+
+Status: done.
+
+Acceptance:
+
+- Settings split into Provider, Chat, Images, and Data & Privacy sections.
+- Provider setup remains the primary path for API key and endpoint configuration.
+- Chat settings keep only the model field.
+- Image settings keep simple generation defaults.
+- Data & Privacy shows local storage and key handling boundaries.
