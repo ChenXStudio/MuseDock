@@ -2,9 +2,9 @@
 
 All notable changes to MuseDock Open will be documented in this file.
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-05-06
 
-Initial pre-release candidate.
+Initial pre-release candidate. See [docs/releases/v0.1.0.md](./docs/releases/v0.1.0.md) for release notes and artifact details.
 
 ### Added
 
@@ -24,4 +24,5 @@ Initial pre-release candidate.
 
 - App signing is not configured.
 - macOS notarization is not configured.
+- Windows signing is not configured.
 - Auto-update is not configured.

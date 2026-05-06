@@ -133,6 +133,12 @@ If the source icon changes, regenerate all platform icon files before release.
 
 ## Release Note Template
 
+The current `v0.1.0` release note draft is in:
+
+```text
+docs/releases/v0.1.0.md
+```
+
 ```markdown
 ## MuseDock Open v0.1.0
 
