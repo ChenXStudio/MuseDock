@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a user-facing improvement.
+title: "[Feature]: "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        MuseDock Open is designed for people who want useful AI tools without learning many model parameters. Please describe the user problem first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: What is hard, missing, or confusing today?
+      placeholder: I want to...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested solution
+      description: Describe the simplest user experience that would solve it.
+      placeholder: Add a button that...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. Mention other approaches if useful.
+    validations:
+      required: false
+  - type: checkboxes
+    id: fit
+    attributes:
+      label: Product fit
+      options:
+        - label: This can work with sensible defaults for non-expert users.
+          required: true
+        - label: This does not require exposing advanced AI parameters in the main flow.
+          required: true

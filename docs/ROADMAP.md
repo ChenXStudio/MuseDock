@@ -134,3 +134,27 @@ Acceptance:
 - Windows build steps reserved and documented.
 - Unsigned build limitations documented.
 - Local macOS `.app` and `.dmg` build verified.
+
+## Task 11: GitHub Project Hygiene
+
+Status: done.
+
+Acceptance:
+
+- Bug report issue template added.
+- Feature request issue template added.
+- Provider compatibility issue template added.
+- Pull request template added.
+- Release note template added.
+- GitHub label suggestions documented.
+
+## Task 12: First Pre-release Preparation
+
+Status: planned.
+
+Acceptance:
+
+- `v0.1.0` release note draft prepared.
+- macOS `.dmg` artifact confirmed.
+- Windows artifact marked pending until built on Windows.
+- Tag creation confirmed by maintainer.

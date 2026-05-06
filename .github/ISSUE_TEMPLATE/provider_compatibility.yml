@@ -1,0 +1,66 @@
+name: Provider compatibility
+description: Report an OpenAI-compatible provider that does not work as expected.
+title: "[Provider]: "
+labels: ["provider"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste API keys. If possible, replace private prompts and response text with short mock examples.
+  - type: input
+    id: provider
+    attributes:
+      label: Provider name
+      placeholder: OpenAI, Azure OpenAI, OpenRouter, local service...
+    validations:
+      required: true
+  - type: input
+    id: base_url
+    attributes:
+      label: Base URL pattern
+      description: You may redact private host names.
+      placeholder: https://api.example.com/v1
+    validations:
+      required: false
+  - type: dropdown
+    id: feature
+    attributes:
+      label: Affected feature
+      options:
+        - Chat
+        - Image generation
+        - Provider test
+        - API key storage
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What failed?
+      placeholder: The provider returned...
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error message
+      description: Remove API keys and private content before sharing.
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: expected_shape
+    attributes:
+      label: Response shape notes
+      description: Optional. Share non-sensitive details about how this provider differs from OpenAI-compatible responses.
+      render: json
+    validations:
+      required: false
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed API keys and private content from this report.
+          required: true
