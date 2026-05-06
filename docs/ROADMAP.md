@@ -176,3 +176,14 @@ Acceptance:
 - Chat settings keep only the model field.
 - Image settings keep simple generation defaults.
 - Data & Privacy shows local storage and key handling boundaries.
+
+## Task 14: Conversation Search
+
+Status: done.
+
+Acceptance:
+
+- Sidebar has a simple conversation search field.
+- Search matches conversation titles.
+- Search matches local message content.
+- Empty search results are shown without changing stored conversations.

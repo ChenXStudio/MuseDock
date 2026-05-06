@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { Bot, Check, Copy, Database, Image, KeyRound, Loader2, Plus, Send, Settings, Trash2 } from "lucide-react";
+import { Bot, Check, Copy, Database, Image, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ChatMessage, ChatStreamEvent, Conversation, GeneratedImage, PersistedMessage, ProviderConfig, localApi } from "./tauri";
@@ -33,6 +33,7 @@ export default function App() {
   const [provider, setProvider] = useState<ProviderConfig>(defaultConfig);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [conversationSearch, setConversationSearch] = useState("");
   const [input, setInput] = useState("");
   const [imagePrompt, setImagePrompt] = useState("");
   const [imageModel, setImageModel] = useState("gpt-image-1");
@@ -54,6 +55,17 @@ export default function App() {
     () => conversations.find((item) => item.id === activeConversationId) || null,
     [activeConversationId, conversations],
   );
+  const filteredConversations = useMemo(() => {
+    const query = conversationSearch.trim().toLowerCase();
+    if (!query) return conversations;
+    return conversations.filter((conversation) => {
+      const titleMatches = conversation.title.toLowerCase().includes(query);
+      const messageMatches = conversation.messages.some((message) =>
+        message.content.toLowerCase().includes(query),
+      );
+      return titleMatches || messageMatches;
+    });
+  }, [conversationSearch, conversations]);
   const messages = activeConversation?.messages || [];
   const pageTitle =
     view === "chat" ? "Chat" : view === "images" ? "Images" : "Settings";
@@ -406,8 +418,22 @@ export default function App() {
 
         <section className="conversation-pane">
           <button className="new-chat" onClick={newConversation}>New chat</button>
+          <label className="conversation-search">
+            <Search size={15} />
+            <input
+              aria-label="Search conversations"
+              onChange={(event) => setConversationSearch(event.target.value)}
+              placeholder="Search chats"
+              value={conversationSearch}
+            />
+          </label>
           <div className="conversation-list">
-            {conversations.map((conversation) => (
+            {filteredConversations.length === 0 && (
+              <div className="conversation-empty">
+                {conversationSearch.trim() ? "No matching chats" : "No chats yet"}
+              </div>
+            )}
+            {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
                 className={`conversation-item ${conversation.id === activeConversationId ? "active" : ""}`}

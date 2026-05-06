@@ -127,9 +127,42 @@ button {
   background: #edf4ff;
 }
 
+.conversation-search {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #667085;
+}
+
+.conversation-search input {
+  min-width: 0;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: #344054;
+  outline: none;
+}
+
+.conversation-search input::placeholder {
+  color: #98a2b3;
+}
+
 .conversation-list {
   min-height: 0;
   overflow: auto;
+}
+
+.conversation-empty {
+  padding: 12px 8px;
+  color: #667085;
+  font-size: 13px;
+  text-align: center;
 }
 
 .conversation-item {
