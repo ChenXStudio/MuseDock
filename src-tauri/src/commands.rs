@@ -139,6 +139,12 @@ pub struct GeneratedImage {
     pub created_at: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExportedFile {
+    pub path: String,
+    pub file_name: String,
+}
+
 fn default_image_count() -> u8 {
     1
 }
@@ -367,6 +373,33 @@ pub async fn delete_conversation(
     write_conversations(&state, &conversations).await
 }
 
+#[tauri::command]
+pub async fn export_conversation_markdown(
+    state: State<'_, AppState>,
+    conversation: Conversation,
+) -> Result<ExportedFile, String> {
+    if conversation.id.trim().is_empty() {
+        return Err("会话 ID 不能为空".to_string());
+    }
+    tokio::fs::create_dir_all(state.exports_dir())
+        .await
+        .map_err(|err| format!("创建导出目录失败: {err}"))?;
+    let file_name = format!(
+        "{}-{}.md",
+        sanitize_file_stem(&conversation.title),
+        sanitize_file_stem(&conversation.id)
+    );
+    let path = state.exports_dir().join(&file_name);
+    let content = render_conversation_markdown(&conversation);
+    tokio::fs::write(&path, content)
+        .await
+        .map_err(|err| format!("导出会话失败: {err}"))?;
+    Ok(ExportedFile {
+        path: path.to_string_lossy().to_string(),
+        file_name,
+    })
+}
+
 fn validate_provider_metadata(config: &ProviderConfig) -> Result<(), String> {
     if config.name.trim().is_empty() {
         return Err("Provider 名称不能为空".to_string());
@@ -382,6 +415,47 @@ fn validate_provider_metadata(config: &ProviderConfig) -> Result<(), String> {
         return Err("聊天模型不能为空".to_string());
     }
     Ok(())
+}
+
+fn render_conversation_markdown(conversation: &Conversation) -> String {
+    let mut content = String::new();
+    content.push_str(&format!("# {}\n\n", conversation.title.trim()));
+    content.push_str(&format!("- Created: `{}`\n", conversation.created_at));
+    content.push_str(&format!("- Updated: `{}`\n\n", conversation.updated_at));
+
+    for message in &conversation.messages {
+        let role = match message.role.as_str() {
+            "user" => "User",
+            "assistant" => "Assistant",
+            other => other,
+        };
+        content.push_str(&format!("## {role}\n\n"));
+        content.push_str(message.content.trim());
+        content.push_str("\n\n");
+    }
+
+    content
+}
+
+fn sanitize_file_stem(value: &str) -> String {
+    let mut sanitized = String::new();
+    for ch in value.chars() {
+        if ch.is_ascii_alphanumeric() {
+            sanitized.push(ch.to_ascii_lowercase());
+        } else if ch.is_whitespace() || matches!(ch, '-' | '_' | '.') {
+            sanitized.push('-');
+        }
+    }
+    let sanitized = sanitized
+        .split('-')
+        .filter(|part| !part.is_empty())
+        .collect::<Vec<_>>()
+        .join("-");
+    if sanitized.is_empty() {
+        "conversation".to_string()
+    } else {
+        sanitized.chars().take(64).collect()
+    }
 }
 
 fn normalize_provider_id(id: &str) -> String {

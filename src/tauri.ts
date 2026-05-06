@@ -60,6 +60,11 @@ export interface GeneratedImage {
   created_at: string;
 }
 
+export interface ExportedFile {
+  path: string;
+  file_name: string;
+}
+
 export const localApi = {
   getAppDataDir: () => invoke<string>("get_app_data_dir"),
   loadProviderConfig: () => invoke<ProviderConfig>("load_provider_config"),
@@ -86,4 +91,6 @@ export const localApi = {
     invoke<void>("save_conversation", { conversation }),
   deleteConversation: (conversationId: string) =>
     invoke<void>("delete_conversation", { conversationId }),
+  exportConversationMarkdown: (conversation: Conversation) =>
+    invoke<ExportedFile>("export_conversation_markdown", { conversation }),
 };

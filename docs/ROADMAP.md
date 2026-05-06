@@ -187,3 +187,14 @@ Acceptance:
 - Search matches conversation titles.
 - Search matches local message content.
 - Empty search results are shown without changing stored conversations.
+
+## Task 15: Conversation Markdown Export
+
+Status: done.
+
+Acceptance:
+
+- User can export a conversation from the sidebar.
+- Exported file is Markdown.
+- Export is written to the local app data directory.
+- API keys and provider secrets are not included.

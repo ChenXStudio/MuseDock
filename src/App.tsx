@@ -253,6 +253,19 @@ export default function App() {
     setStatus("会话已删除");
   };
 
+  const exportConversation = async (conversation: Conversation) => {
+    setBusy(true);
+    setStatus("");
+    try {
+      const exported = await localApi.exportConversationMarkdown(conversation);
+      setStatus(`已导出: ${exported.path}`);
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const text = input.trim();
@@ -450,6 +463,9 @@ export default function App() {
                 </button>
                 <button className="conversation-action" onClick={() => renameConversation(conversation)}>
                   Rename
+                </button>
+                <button className="conversation-action" onClick={() => exportConversation(conversation)}>
+                  Export
                 </button>
                 <button className="conversation-action danger-text" onClick={() => deleteConversation(conversation)}>
                   Delete

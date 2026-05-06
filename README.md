@@ -10,6 +10,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - Streaming chat output through OpenAI-compatible `/chat/completions`.
 - Markdown rendering with tables, lists, and copyable code blocks.
 - Local conversation history with create, rename, and delete actions.
+- Conversation export to Markdown.
 - Multiple provider profiles.
 - Provider-specific API keys stored in the system keychain.
 - OpenAI-compatible `/images/generations` support.
@@ -105,6 +106,7 @@ Files:
 - `conversations.json`: local chat history.
 - `generated-images.json`: local generated image history metadata.
 - `generated-images/`: locally saved generated images.
+- `exports/`: Markdown conversation exports.
 
 To reset local app data, quit the app and remove the app data directory. API keys may also need to be removed from the system keychain.
 
