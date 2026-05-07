@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
-import { Bot, Check, Copy, Database, Image, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2 } from "lucide-react";
+import { Bot, Check, Copy, Database, Image, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ChatMessage, ChatStreamEvent, Conversation, GeneratedImage, PersistedMessage, ProviderConfig, localApi } from "./tauri";
@@ -43,6 +43,7 @@ export default function App() {
   const [imageSaveDir, setImageSaveDir] = useState("");
   const [usingDefaultImageDir, setUsingDefaultImageDir] = useState(true);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [appDataDir, setAppDataDir] = useState("");
@@ -70,6 +71,10 @@ export default function App() {
     });
   }, [conversationSearch, conversations]);
   const messages = activeConversation?.messages || [];
+  const selectedImage = useMemo(
+    () => generatedImages.find((image) => image.id === selectedImageId) || null,
+    [generatedImages, selectedImageId],
+  );
   const pageTitle =
     view === "chat" ? "Chat" : view === "images" ? "Images" : "Settings";
   const pageDescription =
@@ -405,6 +410,7 @@ export default function App() {
     try {
       await localApi.deleteGeneratedImage(image.id);
       setGeneratedImages((current) => current.filter((item) => item.id !== image.id));
+      setSelectedImageId((current) => (current === image.id ? null : current));
       setStatus("图片已删除");
     } catch (error) {
       setStatus(String(error));
@@ -650,7 +656,13 @@ export default function App() {
               ) : (
                 generatedImages.map((image) => (
                   <article className="image-card" key={image.id}>
-                    <img src={convertFileSrc(image.path)} alt={image.file_name} />
+                    <button
+                      className="image-preview-button"
+                      onClick={() => setSelectedImageId(image.id)}
+                      type="button"
+                    >
+                      <img src={convertFileSrc(image.path)} alt={image.file_name} />
+                    </button>
                     <div>
                       <strong>{image.file_name}</strong>
                       <p title={image.prompt}>{image.prompt}</p>
@@ -917,6 +929,46 @@ export default function App() {
           </section>
         )}
       </main>
+      {selectedImage && (
+        <div className="image-detail-backdrop" role="presentation" onClick={() => setSelectedImageId(null)}>
+          <section className="image-detail" role="dialog" aria-modal="true" aria-label="Image details" onClick={(event) => event.stopPropagation()}>
+            <div className="image-detail-preview">
+              <img src={convertFileSrc(selectedImage.path)} alt={selectedImage.file_name} />
+            </div>
+            <div className="image-detail-body">
+              <div className="image-detail-header">
+                <div>
+                  <h2>{selectedImage.file_name}</h2>
+                  <p>{selectedImage.model} / {selectedImage.size}</p>
+                </div>
+                <button onClick={() => setSelectedImageId(null)} title="Close" type="button">
+                  <X size={18} />
+                </button>
+              </div>
+              <label>
+                Prompt
+                <textarea readOnly rows={7} value={selectedImage.prompt} />
+              </label>
+              <div className="image-detail-meta">
+                <strong>Path</strong>
+                <span title={selectedImage.path}>{selectedImage.path}</span>
+                <strong>Created</strong>
+                <span>{selectedImage.created_at}</span>
+              </div>
+              <div className="image-detail-actions">
+                <button onClick={() => copyText(selectedImage.path)} type="button">
+                  <Copy size={14} />
+                  Copy path
+                </button>
+                <button className="danger" disabled={busy} onClick={() => deleteGeneratedImage(selectedImage)} type="button">
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

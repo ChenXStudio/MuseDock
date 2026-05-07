@@ -210,3 +210,15 @@ Acceptance:
 - User can return to the default image folder.
 - New generated images use the configured folder.
 - Existing image history keeps original paths.
+
+## Task 17: Image History Detail Preview
+
+Status: done.
+
+Acceptance:
+
+- User can open a generated image from the image history.
+- Detail view shows a larger image preview.
+- Detail view shows full prompt, model, size, path, and created time.
+- User can copy the image path from the detail view.
+- User can delete the image from the detail view.
