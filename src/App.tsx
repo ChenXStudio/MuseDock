@@ -312,28 +312,29 @@ export default function App() {
     setBusy(true);
     setStatus("生成中...");
 
+    const assistantMessageId = createId();
+    let streamedContent = "";
+    const streamingConversation: Conversation = {
+      ...draftConversation,
+      messages: [
+        ...nextMessages,
+        {
+          id: assistantMessageId,
+          role: "assistant",
+          content: "",
+          created_at: new Date().toISOString(),
+        },
+      ],
+      updated_at: new Date().toISOString(),
+    };
+    upsertConversation(streamingConversation);
+    const apiMessages: ChatMessage[] = [
+      { role: "system", content: defaultSystemPrompt },
+      ...nextMessages.map(({ role, content }) => ({ role, content })),
+    ];
+    const requestId = createId();
+
     try {
-      const assistantMessageId = createId();
-      let streamedContent = "";
-      const streamingConversation: Conversation = {
-        ...draftConversation,
-        messages: [
-          ...nextMessages,
-          {
-            id: assistantMessageId,
-            role: "assistant",
-            content: "",
-            created_at: new Date().toISOString(),
-          },
-        ],
-        updated_at: new Date().toISOString(),
-      };
-      upsertConversation(streamingConversation);
-      const apiMessages: ChatMessage[] = [
-        { role: "system", content: defaultSystemPrompt },
-        ...nextMessages.map(({ role, content }) => ({ role, content })),
-      ];
-      const requestId = createId();
       const unlisten = await listen<ChatStreamEvent>("chat_stream", (event) => {
         if (event.payload.request_id !== requestId) return;
         if (event.payload.done) return;
@@ -364,7 +365,20 @@ export default function App() {
       await localApi.saveConversation(finalConversation);
       setStatus("完成");
     } catch (error) {
-      setStatus(String(error));
+      const message = String(error);
+      const failedContent = streamedContent
+        ? `${streamedContent}\n\n---\n生成中断：${message}`
+        : `生成失败：${message}`;
+      const failedConversation: Conversation = {
+        ...streamingConversation,
+        messages: streamingConversation.messages.map((item) =>
+          item.id === assistantMessageId ? { ...item, content: failedContent } : item,
+        ),
+        updated_at: new Date().toISOString(),
+      };
+      upsertConversation(failedConversation);
+      await localApi.saveConversation(failedConversation);
+      setStatus(message);
     } finally {
       setBusy(false);
     }

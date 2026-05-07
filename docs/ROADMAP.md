@@ -233,3 +233,14 @@ Acceptance:
 - Pressing Shift+Enter keeps a newline.
 - Empty messages are not submitted.
 - Existing send button behavior is unchanged.
+
+## Task 19: Generation Error Context
+
+Status: done.
+
+Acceptance:
+
+- Failed chat generation leaves an assistant message in the conversation.
+- Partial streamed content is preserved when a stream fails.
+- The top status still shows the provider error.
+- Image generation failures do not modify existing image history.
