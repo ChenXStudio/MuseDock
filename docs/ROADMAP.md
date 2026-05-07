@@ -222,3 +222,14 @@ Acceptance:
 - Detail view shows full prompt, model, size, path, and created time.
 - User can copy the image path from the detail view.
 - User can delete the image from the detail view.
+
+## Task 18: Chat Composer Keyboard Flow
+
+Status: done.
+
+Acceptance:
+
+- Pressing Enter sends the current chat message.
+- Pressing Shift+Enter keeps a newline.
+- Empty messages are not submitted.
+- Existing send button behavior is unchanged.
