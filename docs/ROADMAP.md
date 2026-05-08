@@ -442,3 +442,13 @@ Acceptance:
 - Chat and Images views can switch between saved provider profiles.
 - Switcher does not expose advanced provider parameters.
 - Switcher is disabled while a request is busy.
+
+## Task 40: Remember Last Provider
+
+Status: done.
+
+Acceptance:
+
+- App remembers the last selected Provider locally.
+- Remembering the Provider does not store API keys or prompts.
+- Default Provider metadata is not changed by temporary switching.

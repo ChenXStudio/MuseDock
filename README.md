@@ -17,6 +17,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - Multiple provider profiles.
 - Provider setup readiness summary for required fields.
 - Quick Provider switcher for Chat and Images.
+- Last selected Provider is remembered locally.
 - Provider-specific API keys stored in the system keychain.
 - API Key input remains hidden by default and can be revealed while typing.
 - OpenAI-compatible `/images/generations` support.

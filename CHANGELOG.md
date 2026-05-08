@@ -20,6 +20,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - API Key visibility toggle in Provider settings.
 - Provider setup readiness summary.
 - Quick Provider switcher on Chat and Images views.
+- Last used Provider persistence.
 - Dismissible status messages.
 - Last view and settings section persistence.
 

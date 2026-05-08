@@ -12,6 +12,7 @@ MuseDock Open is designed as a local-first desktop app.
 - If you choose a custom image folder, new generated image files are saved there.
 - Markdown conversation exports are saved in the app data directory when requested.
 - Local JSON backups are saved only when you choose an export path, and imported only after you choose a backup file.
+- UI preferences such as the last view and last selected Provider are stored locally.
 
 ## What Leaves Your Device
 

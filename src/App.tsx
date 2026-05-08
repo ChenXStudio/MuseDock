@@ -14,6 +14,7 @@ const defaultSystemPrompt =
   "You are MuseDock Open, a concise and practical AI assistant.";
 const lastViewKey = "musedock:last-view";
 const lastSettingsSectionKey = "musedock:last-settings-section";
+const lastProviderIdKey = "musedock:last-provider-id";
 const appVersion = "0.1.0";
 const releaseUrl = "https://github.com/ChenXStudio/MuseDock/releases/tag/v0.1.0";
 
@@ -136,8 +137,14 @@ export default function App() {
         localApi.loadImageSettings(),
       ]);
     const nextProviders = loadedProviders.length ? loadedProviders : [defaultConfig];
+    const lastProviderId = window.localStorage.getItem(lastProviderIdKey);
+    const selectedProvider =
+      nextProviders.find((item) => item.id === lastProviderId) ||
+      nextProviders.find((item) => item.is_default) ||
+      nextProviders[0];
     setProviders(nextProviders);
-    setProvider(nextProviders.find((item) => item.is_default) || nextProviders[0]);
+    setProvider(selectedProvider);
+    window.localStorage.setItem(lastProviderIdKey, selectedProvider.id);
     setConversations(loadedConversations);
     setActiveConversationId(loadedConversations[0]?.id || null);
     setExpandedConversationId(null);
@@ -180,6 +187,7 @@ export default function App() {
 
   const upsertProviderState = (saved: ProviderConfig) => {
     const clean = { ...saved, api_key: "" };
+    window.localStorage.setItem(lastProviderIdKey, clean.id);
     setProviders((current) => {
       const existing = current.some((item) => item.id === clean.id);
       const next = existing
@@ -240,6 +248,7 @@ export default function App() {
   const selectProvider = (providerId: string) => {
     const selected = providers.find((item) => item.id === providerId);
     if (!selected) return;
+    window.localStorage.setItem(lastProviderIdKey, selected.id);
     setProvider({ ...selected, api_key: "" });
   };
 
@@ -253,6 +262,7 @@ export default function App() {
     };
     setProviders((current) => [...current, next]);
     setProvider(next);
+    window.localStorage.setItem(lastProviderIdKey, next.id);
     setStatus("新 Provider 已创建，保存后生效");
   };
 
@@ -270,6 +280,7 @@ export default function App() {
       const nextSelected = nextProviders.find((item) => item.is_default) || nextProviders[0];
       setProviders(nextProviders);
       setProvider(nextSelected);
+      window.localStorage.setItem(lastProviderIdKey, nextSelected.id);
       setStatus("Provider 已删除");
     } catch (error) {
       setStatus(String(error));
