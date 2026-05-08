@@ -1007,6 +1007,20 @@ export default function App() {
                 <span>{selectedImage.created_at}</span>
               </div>
               <div className="image-detail-actions">
+                <button
+                  onClick={() => {
+                    setImagePrompt(selectedImage.prompt);
+                    setImageModel(selectedImage.model);
+                    setImageSize(selectedImage.size);
+                    setSelectedImageId(null);
+                    setView("images");
+                    setStatus("Prompt 已放入生成框");
+                  }}
+                  type="button"
+                >
+                  <Image size={14} />
+                  Use prompt
+                </button>
                 <button onClick={() => copyText(selectedImage.path)} type="button">
                   <Copy size={14} />
                   Copy path

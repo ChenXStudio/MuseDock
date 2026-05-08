@@ -254,3 +254,14 @@ Acceptance:
 - Images page has a simple image history search field.
 - Search matches prompt, model, file name, size, and path.
 - Empty search results are shown without changing image history.
+
+## Task 21: Reuse Image Prompt
+
+Status: done.
+
+Acceptance:
+
+- Image detail view has a simple reuse action.
+- Reuse action copies the previous prompt into the generator.
+- Reuse action restores the previous model and size.
+- Existing image history is unchanged.
