@@ -1,8 +1,8 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import { Bot, Check, Copy, Database, Image, Info, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2, X } from "lucide-react";
+import { Bot, Check, Copy, Database, Image, Info, KeyRound, Loader2, Plus, Search, Send, Settings, Square, Trash2, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ChatMessage, ChatStreamEvent, Conversation, GeneratedImage, PersistedMessage, ProviderConfig, localApi } from "./tauri";
@@ -64,8 +64,10 @@ export default function App() {
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
+  const [activeRequestId, setActiveRequestId] = useState<string | null>(null);
   const [appDataDir, setAppDataDir] = useState("");
   const [exportsDir, setExportsDir] = useState("");
+  const cancelledRequestIds = useRef<Set<string>>(new Set());
 
   const canChat = useMemo(
     () =>
@@ -431,6 +433,7 @@ export default function App() {
       ...nextMessages.map(({ role, content }) => ({ role, content })),
     ];
     const requestId = createId();
+    setActiveRequestId(requestId);
 
     try {
       const unlisten = await listen<ChatStreamEvent>("chat_stream", (event) => {
@@ -461,7 +464,9 @@ export default function App() {
       };
       upsertConversation(finalConversation);
       await localApi.saveConversation(finalConversation);
-      setStatus("完成");
+      const wasCancelled = cancelledRequestIds.current.has(requestId);
+      setStatus(wasCancelled ? "已停止生成" : "完成");
+      cancelledRequestIds.current.delete(requestId);
     } catch (error) {
       const message = String(error);
       const failedContent = streamedContent
@@ -478,7 +483,21 @@ export default function App() {
       await localApi.saveConversation(failedConversation);
       setStatus(message);
     } finally {
+      cancelledRequestIds.current.delete(requestId);
       setBusy(false);
+      setActiveRequestId((current) => (current === requestId ? null : current));
+    }
+  };
+
+  const stopGeneration = async () => {
+    if (!activeRequestId) return;
+    cancelledRequestIds.current.add(activeRequestId);
+    setStatus("正在停止生成...");
+    try {
+      await localApi.cancelChatStream(activeRequestId);
+    } catch (error) {
+      cancelledRequestIds.current.delete(activeRequestId);
+      setStatus(String(error));
     }
   };
 
@@ -797,10 +816,17 @@ export default function App() {
                 placeholder="输入你的问题..."
                 rows={3}
               />
-              <button type="submit" disabled={busy || !input.trim()}>
-                {busy ? <Loader2 size={18} className="spin" /> : <Send size={18} />}
-                Send
-              </button>
+              {activeRequestId ? (
+                <button type="button" onClick={stopGeneration}>
+                  <Square size={17} />
+                  Stop
+                </button>
+              ) : (
+                <button type="submit" disabled={busy || !input.trim()}>
+                  <Send size={18} />
+                  Send
+                </button>
+              )}
             </form>
           </section>
         ) : view === "images" ? (

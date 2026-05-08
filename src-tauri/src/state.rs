@@ -1,12 +1,18 @@
 use std::path::PathBuf;
+use std::{collections::HashSet, sync::Arc};
+use tokio::sync::Mutex;
 
 pub struct AppState {
     pub app_data_dir: PathBuf,
+    pub cancelled_chat_streams: Arc<Mutex<HashSet<String>>>,
 }
 
 impl AppState {
     pub fn new(app_data_dir: PathBuf) -> Self {
-        Self { app_data_dir }
+        Self {
+            app_data_dir,
+            cancelled_chat_streams: Arc::new(Mutex::new(HashSet::new())),
+        }
     }
 
     pub fn provider_config_path(&self) -> PathBuf {

@@ -401,3 +401,14 @@ Acceptance:
 - Import replaces provider metadata, conversations, image history, and image settings.
 - Import does not import, delete, or overwrite API keys in the system keychain.
 - App state refreshes after import.
+
+## Task 36: Stop Chat Generation
+
+Status: done.
+
+Acceptance:
+
+- Chat composer shows Stop while a streaming response is active.
+- Stop requests cancellation through the local Rust command layer.
+- Partial streamed content is preserved in the conversation.
+- Normal send behavior returns after the request finishes or stops.

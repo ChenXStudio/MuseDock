@@ -16,6 +16,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Local folder shortcuts for app data, exports, and generated images.
 - Local cleanup actions for conversations and image history.
 - Local JSON backup export and import without API keys.
+- Stop action for streaming chat generation.
 - Dismissible status messages.
 - Last view and settings section persistence.
 

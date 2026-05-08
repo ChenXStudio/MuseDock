@@ -8,6 +8,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 
 - ChatGPT-like chat interface.
 - Streaming chat output through OpenAI-compatible `/chat/completions`.
+- Stop action for active streaming chat responses.
 - Markdown rendering with tables, lists, and copyable code blocks.
 - Local conversation history with create, rename, and delete actions.
 - Conversation export to Markdown.
@@ -144,6 +145,7 @@ Before publishing a release:
 - Default provider survives app restart.
 - API key is not written to `providers.json`.
 - Chat streams responses.
+- Active chat generation can be stopped.
 - Markdown and code blocks render correctly.
 - Conversations survive app restart.
 - Image generation saves files under `generated-images`.

@@ -354,7 +354,25 @@ pub async fn send_chat_message_stream(
         return Err("消息不能为空".to_string());
     }
     let config = select_provider_config(state.inner(), Some(provider_id)).await?;
-    call_chat_completions_stream(&app, &request_id, &config, &messages).await
+    clear_chat_stream_cancelled(state.inner(), &request_id).await;
+    call_chat_completions_stream(&app, state.inner(), &request_id, &config, &messages).await
+}
+
+#[tauri::command]
+pub async fn cancel_chat_stream(
+    state: State<'_, AppState>,
+    request_id: String,
+) -> Result<(), String> {
+    let request_id = request_id.trim();
+    if request_id.is_empty() {
+        return Err("请求 ID 不能为空".to_string());
+    }
+    state
+        .cancelled_chat_streams
+        .lock()
+        .await
+        .insert(request_id.to_string());
+    Ok(())
 }
 
 #[tauri::command]
@@ -824,6 +842,7 @@ async fn call_chat_completions(
 
 async fn call_chat_completions_stream(
     app: &AppHandle,
+    state: &AppState,
     request_id: &str,
     config: &ProviderConfig,
     messages: &[ChatMessage],
@@ -864,13 +883,24 @@ async fn call_chat_completions_stream(
     let mut buffer = String::new();
 
     while let Some(chunk) = stream.next().await {
+        if is_chat_stream_cancelled(state, request_id).await {
+            clear_chat_stream_cancelled(state, request_id).await;
+            emit_stream_done(app, request_id)?;
+            return Ok(());
+        }
         let chunk = chunk.map_err(|err| format!("读取流式响应失败: {err}"))?;
         buffer.push_str(&String::from_utf8_lossy(&chunk));
 
         while let Some((index, delimiter_len)) = find_sse_delimiter(&buffer) {
+            if is_chat_stream_cancelled(state, request_id).await {
+                clear_chat_stream_cancelled(state, request_id).await;
+                emit_stream_done(app, request_id)?;
+                return Ok(());
+            }
             let event = buffer[..index].to_string();
             buffer = buffer[index + delimiter_len..].to_string();
             if process_stream_event(app, request_id, &event)? {
+                clear_chat_stream_cancelled(state, request_id).await;
                 emit_stream_done(app, request_id)?;
                 return Ok(());
             }
@@ -880,8 +910,21 @@ async fn call_chat_completions_stream(
     if !buffer.trim().is_empty() {
         let _ = process_stream_event(app, request_id, &buffer)?;
     }
+    clear_chat_stream_cancelled(state, request_id).await;
     emit_stream_done(app, request_id)?;
     Ok(())
+}
+
+async fn is_chat_stream_cancelled(state: &AppState, request_id: &str) -> bool {
+    state
+        .cancelled_chat_streams
+        .lock()
+        .await
+        .contains(request_id)
+}
+
+async fn clear_chat_stream_cancelled(state: &AppState, request_id: &str) {
+    state.cancelled_chat_streams.lock().await.remove(request_id);
 }
 
 fn find_sse_delimiter(buffer: &str) -> Option<(usize, usize)> {

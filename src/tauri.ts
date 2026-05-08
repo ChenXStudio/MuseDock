@@ -95,6 +95,8 @@ export const localApi = {
     invoke<ChatResponse>("send_chat_message", { providerId: null, messages }),
   sendChatMessageStream: (requestId: string, providerId: string, messages: ChatMessage[]) =>
     invoke<void>("send_chat_message_stream", { requestId, providerId, messages }),
+  cancelChatStream: (requestId: string) =>
+    invoke<void>("cancel_chat_stream", { requestId }),
   generateImages: (request: GenerateImageRequest) =>
     invoke<GeneratedImage[]>("generate_images", { request }),
   loadGeneratedImages: () => invoke<GeneratedImage[]>("load_generated_images"),

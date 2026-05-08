@@ -30,6 +30,7 @@ pub fn run() {
             commands::test_provider,
             commands::send_chat_message,
             commands::send_chat_message_stream,
+            commands::cancel_chat_stream,
             commands::generate_images,
             commands::load_generated_images,
             commands::delete_generated_image,
