@@ -116,15 +116,27 @@ export default function App() {
         ? `Using ${provider.name || "provider"} / ${imageModel || "image model not set"}`
         : settingsDescription(settingsSection);
 
+  const refreshLocalState = async () => {
+    const [loadedProviders, loadedConversations, loadedImages, loadedImageSettings] =
+      await Promise.all([
+        localApi.loadProviderConfigs(),
+        localApi.loadConversations(),
+        localApi.loadGeneratedImages(),
+        localApi.loadImageSettings(),
+      ]);
+    const nextProviders = loadedProviders.length ? loadedProviders : [defaultConfig];
+    setProviders(nextProviders);
+    setProvider(nextProviders.find((item) => item.is_default) || nextProviders[0]);
+    setConversations(loadedConversations);
+    setActiveConversationId(loadedConversations[0]?.id || null);
+    setExpandedConversationId(null);
+    setGeneratedImages(loadedImages);
+    setSelectedImageId(null);
+    setImageSaveDir(loadedImageSettings.save_dir);
+    setUsingDefaultImageDir(loadedImageSettings.using_default_dir);
+  };
+
   useEffect(() => {
-    localApi
-      .loadProviderConfigs()
-      .then((items) => {
-        const next = items.length ? items : [defaultConfig];
-        setProviders(next);
-        setProvider(next.find((item) => item.is_default) || next[0]);
-      })
-      .catch((error) => setStatus(String(error)));
     localApi
       .getAppDataDir()
       .then(setAppDataDir)
@@ -133,24 +145,7 @@ export default function App() {
       .getExportsDir()
       .then(setExportsDir)
       .catch(() => setExportsDir(""));
-    localApi
-      .loadConversations()
-      .then((items) => {
-        setConversations(items);
-        setActiveConversationId(items[0]?.id || null);
-      })
-      .catch((error) => setStatus(String(error)));
-    localApi
-      .loadGeneratedImages()
-      .then(setGeneratedImages)
-      .catch((error) => setStatus(String(error)));
-    localApi
-      .loadImageSettings()
-      .then((settings) => {
-        setImageSaveDir(settings.save_dir);
-        setUsingDefaultImageDir(settings.using_default_dir);
-      })
-      .catch((error) => setStatus(String(error)));
+    refreshLocalState().catch((error) => setStatus(String(error)));
   }, []);
 
   useEffect(() => {
@@ -350,6 +345,33 @@ export default function App() {
     try {
       const exported = await localApi.exportLocalBackup(selected);
       setStatus(`已导出备份: ${exported.path}`);
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const importLocalBackup = async () => {
+    const selected = await open({
+      multiple: false,
+      title: "Import MuseDock backup",
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+    if (!selected || Array.isArray(selected)) return;
+    const confirmed = window.confirm(
+      "Importing this backup will replace local provider metadata, conversations, image history, and image settings. API keys are not included in backups and will remain in the system keychain.",
+    );
+    if (!confirmed) return;
+
+    setBusy(true);
+    setStatus("");
+    try {
+      const summary = await localApi.importLocalBackup(selected);
+      await refreshLocalState();
+      setStatus(
+        `已导入备份: ${summary.providers} providers, ${summary.conversations} conversations, ${summary.generated_images} image records. API keys unchanged.`,
+      );
     } catch (error) {
       setStatus(String(error));
     } finally {
@@ -1137,8 +1159,11 @@ export default function App() {
                         <button onClick={exportLocalBackup} disabled={busy} type="button">
                           Export backup
                         </button>
+                        <button onClick={importLocalBackup} disabled={busy} type="button">
+                          Import backup
+                        </button>
                       </div>
-                      <span>Exports provider metadata, conversations, image history, and image settings. API keys are not included.</span>
+                      <span>Exports or imports provider metadata, conversations, image history, and image settings. API keys are not included.</span>
                     </div>
                     <div>
                       <strong>App data directory</strong>

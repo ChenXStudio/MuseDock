@@ -42,6 +42,7 @@ pub fn run() {
             commands::clear_conversations,
             commands::export_conversation_markdown,
             commands::export_local_backup,
+            commands::import_local_backup,
         ])
         .run(tauri::generate_context!())
         .expect("error while running MuseDock Open");

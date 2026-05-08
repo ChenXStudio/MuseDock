@@ -70,6 +70,13 @@ export interface ImageSettings {
   using_default_dir: boolean;
 }
 
+export interface BackupImportSummary {
+  providers: number;
+  conversations: number;
+  generated_images: number;
+  image_settings_imported: boolean;
+}
+
 export const localApi = {
   getAppDataDir: () => invoke<string>("get_app_data_dir"),
   getExportsDir: () => invoke<string>("get_exports_dir"),
@@ -108,4 +115,6 @@ export const localApi = {
     invoke<ExportedFile>("export_conversation_markdown", { conversation }),
   exportLocalBackup: (path: string) =>
     invoke<ExportedFile>("export_local_backup", { path }),
+  importLocalBackup: (path: string) =>
+    invoke<BackupImportSummary>("import_local_backup", { path }),
 };

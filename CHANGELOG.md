@@ -15,7 +15,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Reuse prompt action from image history.
 - Local folder shortcuts for app data, exports, and generated images.
 - Local cleanup actions for conversations and image history.
-- Local JSON backup export without API keys.
+- Local JSON backup export and import without API keys.
 - Dismissible status messages.
 - Last view and settings section persistence.
 

@@ -390,3 +390,14 @@ Acceptance:
 - Data & Privacy can export a local JSON backup.
 - Backup includes provider metadata, conversations, image history, and image settings.
 - Backup excludes API keys and keychain secrets.
+
+## Task 35: Local Backup Import
+
+Status: done.
+
+Acceptance:
+
+- Data & Privacy can import a local JSON backup.
+- Import replaces provider metadata, conversations, image history, and image settings.
+- Import does not import, delete, or overwrite API keys in the system keychain.
+- App state refreshes after import.

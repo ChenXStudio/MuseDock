@@ -155,7 +155,7 @@ pub struct ImageSettings {
     pub using_default_dir: bool,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct LocalBackup {
     version: String,
     exported_at: String,
@@ -163,7 +163,16 @@ struct LocalBackup {
     conversations: Vec<Conversation>,
     generated_images: Vec<GeneratedImage>,
     image_settings: ImageSettings,
+    #[serde(default)]
     notes: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BackupImportSummary {
+    pub providers: usize,
+    pub conversations: usize,
+    pub generated_images: usize,
+    pub image_settings_imported: bool,
 }
 
 fn default_image_count() -> u8 {
@@ -548,6 +557,41 @@ pub async fn export_local_backup(
         path: target.to_string_lossy().to_string(),
         file_name,
     })
+}
+
+#[tauri::command]
+pub async fn import_local_backup(
+    state: State<'_, AppState>,
+    path: String,
+) -> Result<BackupImportSummary, String> {
+    let path = path.trim();
+    if path.is_empty() {
+        return Err("备份路径不能为空".to_string());
+    }
+
+    let content = tokio::fs::read_to_string(path)
+        .await
+        .map_err(|err| format!("读取备份失败: {err}"))?;
+    let mut backup: LocalBackup =
+        serde_json::from_str(&content).map_err(|err| format!("解析备份失败: {err}"))?;
+    if backup.version != "1" {
+        return Err(format!("不支持的备份版本: {}", backup.version));
+    }
+
+    normalize_stored_providers(&mut backup.providers);
+    let summary = BackupImportSummary {
+        providers: backup.providers.len(),
+        conversations: backup.conversations.len(),
+        generated_images: backup.generated_images.len(),
+        image_settings_imported: true,
+    };
+
+    write_stored_provider_configs(state.inner(), &backup.providers).await?;
+    write_conversations(&state, &backup.conversations).await?;
+    write_generated_images(&state, &backup.generated_images).await?;
+    write_image_settings(&state, &backup.image_settings).await?;
+
+    Ok(summary)
 }
 
 fn validate_provider_metadata(config: &ProviderConfig) -> Result<(), String> {
