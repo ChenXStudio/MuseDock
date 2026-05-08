@@ -93,6 +93,8 @@ export const localApi = {
   loadGeneratedImages: () => invoke<GeneratedImage[]>("load_generated_images"),
   deleteGeneratedImage: (imageId: string) =>
     invoke<void>("delete_generated_image", { imageId }),
+  clearGeneratedImages: (deleteFiles: boolean) =>
+    invoke<void>("clear_generated_images", { deleteFiles }),
   loadImageSettings: () => invoke<ImageSettings>("load_image_settings"),
   saveImageSettings: (settings: ImageSettings) =>
     invoke<ImageSettings>("save_image_settings", { settings }),
@@ -101,6 +103,7 @@ export const localApi = {
     invoke<void>("save_conversation", { conversation }),
   deleteConversation: (conversationId: string) =>
     invoke<void>("delete_conversation", { conversationId }),
+  clearConversations: () => invoke<void>("clear_conversations"),
   exportConversationMarkdown: (conversation: Conversation) =>
     invoke<ExportedFile>("export_conversation_markdown", { conversation }),
 };

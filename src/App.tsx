@@ -526,6 +526,42 @@ export default function App() {
     }
   };
 
+  const clearAllConversations = async () => {
+    if (!window.confirm("Delete all local conversations?")) return;
+    setBusy(true);
+    setStatus("");
+    try {
+      await localApi.clearConversations();
+      setConversations([]);
+      setActiveConversationId(null);
+      setExpandedConversationId(null);
+      setStatus("所有本机会话已清空");
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const clearImageHistory = async (deleteFiles: boolean) => {
+    const message = deleteFiles
+      ? "Delete all image history records and local image files?"
+      : "Clear image history records? Image files will stay on disk.";
+    if (!window.confirm(message)) return;
+    setBusy(true);
+    setStatus("");
+    try {
+      await localApi.clearGeneratedImages(deleteFiles);
+      setGeneratedImages([]);
+      setSelectedImageId(null);
+      setStatus(deleteFiles ? "图片历史和本地图片文件已清空" : "图片历史记录已清空");
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -1074,6 +1110,11 @@ export default function App() {
                     </div>
                     <div>
                       <strong>Conversations</strong>
+                      <div className="data-actions">
+                        <button onClick={clearAllConversations} disabled={busy || conversations.length === 0} type="button">
+                          Clear
+                        </button>
+                      </div>
                       <span>{conversations.length} local conversation{conversations.length === 1 ? "" : "s"}.</span>
                     </div>
                     <div>
@@ -1081,6 +1122,12 @@ export default function App() {
                       <div className="data-actions">
                         <button onClick={() => copyText(imageSaveDir)} type="button">Copy folder</button>
                         <button onClick={() => openLocalPath(imageSaveDir)} type="button">Open</button>
+                        <button onClick={() => clearImageHistory(false)} disabled={busy || generatedImages.length === 0} type="button">
+                          Clear history
+                        </button>
+                        <button className="danger" onClick={() => clearImageHistory(true)} disabled={busy || generatedImages.length === 0} type="button">
+                          Delete files
+                        </button>
                       </div>
                       <span>{generatedImages.length} local image record{generatedImages.length === 1 ? "" : "s"}. New files save to {imageSaveDir || "the default image folder"}.</span>
                     </div>

@@ -11,12 +11,14 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - Markdown rendering with tables, lists, and copyable code blocks.
 - Local conversation history with create, rename, and delete actions.
 - Conversation export to Markdown.
+- Local conversation cleanup.
 - Multiple provider profiles.
 - Provider-specific API keys stored in the system keychain.
 - OpenAI-compatible `/images/generations` support.
 - Generated images saved to the local app data directory.
 - Generated image history persisted locally.
 - Optional custom folder for newly generated images.
+- Image history cleanup with optional local file deletion.
 
 ## Privacy Model
 

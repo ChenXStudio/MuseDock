@@ -342,3 +342,22 @@ Acceptance:
 
 - Image detail view can open the generated image file in the operating system.
 - Existing copy path and delete actions remain available.
+
+## Task 30: Clear Local Conversations
+
+Status: done.
+
+Acceptance:
+
+- Data & Privacy can clear all local conversations.
+- Clearing conversations does not affect Provider profiles or API keys.
+
+## Task 31: Clear Image History
+
+Status: done.
+
+Acceptance:
+
+- Data & Privacy can clear generated image history records.
+- User can choose whether to keep image files on disk.
+- Clearing image history does not affect Provider profiles or API keys.

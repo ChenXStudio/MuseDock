@@ -69,3 +69,5 @@ To delete local data:
 3. Remove saved API keys from the system keychain if needed.
 
 Deleting local files does not delete data held by your configured AI provider.
+
+The app also provides Data & Privacy actions for clearing local conversations and generated image history. API keys are cleared separately from Provider settings.

@@ -376,6 +376,25 @@ pub async fn delete_generated_image(
 }
 
 #[tauri::command]
+pub async fn clear_generated_images(
+    state: State<'_, AppState>,
+    delete_files: bool,
+) -> Result<(), String> {
+    let images = read_generated_images(&state).await?;
+    write_generated_images(&state, &[]).await?;
+    if delete_files {
+        for image in images {
+            match tokio::fs::remove_file(&image.path).await {
+                Ok(()) => {}
+                Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
+                Err(err) => return Err(format!("删除图片文件失败: {err}")),
+            }
+        }
+    }
+    Ok(())
+}
+
+#[tauri::command]
 pub async fn load_image_settings(state: State<'_, AppState>) -> Result<ImageSettings, String> {
     let mut settings = read_image_settings(&state).await?;
     if settings.save_dir.trim().is_empty() {
@@ -440,6 +459,11 @@ pub async fn delete_conversation(
     let mut conversations = read_conversations(&state).await?;
     conversations.retain(|item| item.id != conversation_id);
     write_conversations(&state, &conversations).await
+}
+
+#[tauri::command]
+pub async fn clear_conversations(state: State<'_, AppState>) -> Result<(), String> {
+    write_conversations(&state, &[]).await
 }
 
 #[tauri::command]

@@ -33,11 +33,13 @@ pub fn run() {
             commands::generate_images,
             commands::load_generated_images,
             commands::delete_generated_image,
+            commands::clear_generated_images,
             commands::load_image_settings,
             commands::save_image_settings,
             commands::load_conversations,
             commands::save_conversation,
             commands::delete_conversation,
+            commands::clear_conversations,
             commands::export_conversation_markdown,
         ])
         .run(tauri::generate_context!())
