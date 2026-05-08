@@ -77,6 +77,14 @@ export default function App() {
       provider.chat_model.trim(),
     [provider],
   );
+  const providerReadiness = useMemo(
+    () => [
+      { label: "Base URL", ready: Boolean(provider.base_url.trim()) },
+      { label: "API key", ready: Boolean(provider.api_key.trim() || provider.has_api_key) },
+      { label: "Chat model", ready: Boolean(provider.chat_model.trim()) },
+    ],
+    [provider],
+  );
   const activeConversation = useMemo(
     () => conversations.find((item) => item.id === activeConversationId) || null,
     [activeConversationId, conversations],
@@ -1007,6 +1015,17 @@ export default function App() {
                   <div className="settings-heading">
                     <h2>Provider</h2>
                     <p>Choose the service MuseDock uses for chat and image requests.</p>
+                  </div>
+                  <div className="readiness-panel">
+                    <strong>{canChat ? "Provider ready" : "Provider setup needed"}</strong>
+                    <div>
+                      {providerReadiness.map((item) => (
+                        <span className={item.ready ? "ready" : "missing"} key={item.label}>
+                          {item.ready ? <Check size={13} /> : <X size={13} />}
+                          {item.label}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div className="provider-toolbar">
                     <label>

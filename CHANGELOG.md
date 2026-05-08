@@ -18,6 +18,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Local JSON backup export and import without API keys.
 - Stop action for streaming chat generation.
 - API Key visibility toggle in Provider settings.
+- Provider setup readiness summary.
 - Dismissible status messages.
 - Last view and settings section persistence.
 

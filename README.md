@@ -15,6 +15,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - Local conversation cleanup.
 - Local JSON backup export and import without API keys.
 - Multiple provider profiles.
+- Provider setup readiness summary for required fields.
 - Provider-specific API keys stored in the system keychain.
 - API Key input remains hidden by default and can be revealed while typing.
 - OpenAI-compatible `/images/generations` support.

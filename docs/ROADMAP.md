@@ -422,3 +422,13 @@ Acceptance:
 - Provider settings keep API Key hidden by default.
 - User can temporarily reveal the typed API Key.
 - Saved keychain secrets are still not read back into the form.
+
+## Task 38: Provider Readiness Summary
+
+Status: done.
+
+Acceptance:
+
+- Provider settings show whether setup is ready.
+- Summary shows Base URL, API Key, and Chat model readiness.
+- Summary does not add advanced model parameters.
