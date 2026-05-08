@@ -760,14 +760,32 @@ export default function App() {
             <h1>{pageTitle}</h1>
             <p>{pageDescription}</p>
           </div>
-          {status && (
-            <div className="status">
-              <span>{status}</span>
-              <button onClick={() => setStatus("")} title="Clear status" type="button">
-                <X size={14} />
-              </button>
-            </div>
-          )}
+          <div className="topbar-actions">
+            {view !== "settings" && (
+              <label className="provider-switcher">
+                <span>Provider</span>
+                <select
+                  disabled={busy}
+                  onChange={(event) => selectProvider(event.target.value)}
+                  value={provider.id}
+                >
+                  {providers.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name || "Unnamed Provider"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {status && (
+              <div className="status">
+                <span>{status}</span>
+                <button onClick={() => setStatus("")} title="Clear status" type="button">
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+          </div>
         </header>
 
         {view === "chat" ? (

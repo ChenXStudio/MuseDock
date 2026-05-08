@@ -432,3 +432,13 @@ Acceptance:
 - Provider settings show whether setup is ready.
 - Summary shows Base URL, API Key, and Chat model readiness.
 - Summary does not add advanced model parameters.
+
+## Task 39: Quick Provider Switcher
+
+Status: done.
+
+Acceptance:
+
+- Chat and Images views can switch between saved provider profiles.
+- Switcher does not expose advanced provider parameters.
+- Switcher is disabled while a request is busy.

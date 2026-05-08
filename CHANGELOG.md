@@ -19,6 +19,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Stop action for streaming chat generation.
 - API Key visibility toggle in Provider settings.
 - Provider setup readiness summary.
+- Quick Provider switcher on Chat and Images views.
 - Dismissible status messages.
 - Last view and settings section persistence.
 
