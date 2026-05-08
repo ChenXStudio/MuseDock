@@ -8,6 +8,7 @@
     "core:event:default",
     "core:event:allow-listen",
     "core:event:allow-unlisten",
-    "dialog:allow-open"
+    "dialog:allow-open",
+    "dialog:allow-save"
   ]
 }

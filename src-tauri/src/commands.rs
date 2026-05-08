@@ -5,6 +5,7 @@ use keyring::Entry;
 use reqwest::{header, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::path::PathBuf;
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, State};
@@ -152,6 +153,17 @@ pub struct ImageSettings {
     pub save_dir: String,
     #[serde(default)]
     pub using_default_dir: bool,
+}
+
+#[derive(Debug, Serialize)]
+struct LocalBackup {
+    version: String,
+    exported_at: String,
+    providers: Vec<StoredProviderConfig>,
+    conversations: Vec<Conversation>,
+    generated_images: Vec<GeneratedImage>,
+    image_settings: ImageSettings,
+    notes: Vec<String>,
 }
 
 fn default_image_count() -> u8 {
@@ -489,6 +501,51 @@ pub async fn export_conversation_markdown(
         .map_err(|err| format!("导出会话失败: {err}"))?;
     Ok(ExportedFile {
         path: path.to_string_lossy().to_string(),
+        file_name,
+    })
+}
+
+#[tauri::command]
+pub async fn export_local_backup(
+    state: State<'_, AppState>,
+    path: String,
+) -> Result<ExportedFile, String> {
+    let path = path.trim();
+    if path.is_empty() {
+        return Err("备份路径不能为空".to_string());
+    }
+
+    let target = PathBuf::from(path);
+    if let Some(parent) = target.parent() {
+        if !parent.as_os_str().is_empty() {
+            tokio::fs::create_dir_all(parent)
+                .await
+                .map_err(|err| format!("创建备份目录失败: {err}"))?;
+        }
+    }
+
+    let backup = LocalBackup {
+        version: "1".to_string(),
+        exported_at: unix_millis()?.to_string(),
+        providers: read_stored_provider_configs(state.inner()).await?,
+        conversations: read_conversations(&state).await?,
+        generated_images: read_generated_images(&state).await?,
+        image_settings: read_image_settings(&state).await?,
+        notes: vec!["API keys are stored in the system keychain and are not included.".to_string()],
+    };
+    let content =
+        serde_json::to_string_pretty(&backup).map_err(|err| format!("序列化备份失败: {err}"))?;
+    tokio::fs::write(&target, content)
+        .await
+        .map_err(|err| format!("写入备份失败: {err}"))?;
+
+    let file_name = target
+        .file_name()
+        .and_then(|value| value.to_str())
+        .unwrap_or("musedock-backup.json")
+        .to_string();
+    Ok(ExportedFile {
+        path: target.to_string_lossy().to_string(),
         file_name,
     })
 }

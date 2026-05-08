@@ -380,3 +380,13 @@ Acceptance:
 
 - Esc closes the image detail view.
 - Deleting an image from detail view selects a nearby image when available.
+
+## Task 34: Local Backup Export
+
+Status: done.
+
+Acceptance:
+
+- Data & Privacy can export a local JSON backup.
+- Backup includes provider metadata, conversations, image history, and image settings.
+- Backup excludes API keys and keychain secrets.

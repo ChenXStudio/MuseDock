@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { open } from "@tauri-apps/plugin-dialog";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import { Bot, Check, Copy, Database, Image, Info, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -329,6 +329,27 @@ export default function App() {
     try {
       const exported = await localApi.exportConversationMarkdown(conversation);
       setStatus(`已导出: ${exported.path}`);
+    } catch (error) {
+      setStatus(String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const exportLocalBackup = async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const selected = await save({
+      title: "Export MuseDock backup",
+      defaultPath: `musedock-backup-${today}.json`,
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+    if (!selected) return;
+
+    setBusy(true);
+    setStatus("");
+    try {
+      const exported = await localApi.exportLocalBackup(selected);
+      setStatus(`已导出备份: ${exported.path}`);
     } catch (error) {
       setStatus(String(error));
     } finally {
@@ -1110,6 +1131,15 @@ export default function App() {
                     <p>Review where MuseDock stores local data and what is kept out of normal files.</p>
                   </div>
                   <div className="data-list">
+                    <div>
+                      <strong>Local backup</strong>
+                      <div className="data-actions">
+                        <button onClick={exportLocalBackup} disabled={busy} type="button">
+                          Export backup
+                        </button>
+                      </div>
+                      <span>Exports provider metadata, conversations, image history, and image settings. API keys are not included.</span>
+                    </div>
                     <div>
                       <strong>App data directory</strong>
                       <div className="data-actions">

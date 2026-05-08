@@ -106,4 +106,6 @@ export const localApi = {
   clearConversations: () => invoke<void>("clear_conversations"),
   exportConversationMarkdown: (conversation: Conversation) =>
     invoke<ExportedFile>("export_conversation_markdown", { conversation }),
+  exportLocalBackup: (path: string) =>
+    invoke<ExportedFile>("export_local_backup", { path }),
 };

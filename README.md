@@ -12,6 +12,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - Local conversation history with create, rename, and delete actions.
 - Conversation export to Markdown.
 - Local conversation cleanup.
+- Local JSON backup export without API keys.
 - Multiple provider profiles.
 - Provider-specific API keys stored in the system keychain.
 - OpenAI-compatible `/images/generations` support.
@@ -30,6 +31,7 @@ MuseDock Open does not require a MuseDock server.
 - Conversations are stored locally in `conversations.json`.
 - Generated images are saved locally under `generated-images`.
 - Generated image metadata is stored locally in `generated-images.json`.
+- Local backup exports include metadata and history only; API keys remain in the system keychain.
 - The app does not add telemetry or analytics.
 
 See [PRIVACY.md](./PRIVACY.md) for details.
@@ -111,6 +113,8 @@ Files:
 - `image-settings.json`: image save folder preference.
 - `generated-images/`: locally saved generated images.
 - `exports/`: Markdown conversation exports.
+
+Data & Privacy can export a local JSON backup that includes provider metadata, conversations, generated image history, and image settings. API keys are not included.
 
 To reset local app data, quit the app and remove the app data directory. API keys may also need to be removed from the system keychain.
 

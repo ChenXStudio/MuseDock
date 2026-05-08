@@ -11,6 +11,7 @@ MuseDock Open is designed as a local-first desktop app.
 - Generated image history metadata is stored in the app data directory.
 - If you choose a custom image folder, new generated image files are saved there.
 - Markdown conversation exports are saved in the app data directory when requested.
+- Local JSON backups are saved only when you choose an export path.
 
 ## What Leaves Your Device
 
@@ -36,6 +37,8 @@ They are stored through the operating system keychain:
 - Linux Secret Service, depending on the desktop environment.
 
 The app can clear a saved provider key from the settings screen.
+
+Local backup exports do not include API keys or keychain secrets.
 
 ## Local Files
 
