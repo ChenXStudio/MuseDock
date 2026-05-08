@@ -2,6 +2,33 @@
 
 All notable changes to MuseDock Open will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- Settings split into Provider, Chat, Images, Data & Privacy, and About sections.
+- Conversation search.
+- Conversation Markdown export.
+- Configurable image save folder.
+- Image history detail preview.
+- Image history search.
+- Reuse prompt action from image history.
+- Local folder shortcuts for app data, exports, and generated images.
+- Local cleanup actions for conversations and image history.
+- Dismissible status messages.
+- Last view and settings section persistence.
+
+### Changed
+
+- Chat composer now sends with Enter and inserts new lines with Shift+Enter.
+- Conversation item actions are grouped behind a compact More toggle.
+- Main navigation uses Settings instead of Provider.
+- Sidebar shows the active Provider name.
+
+### Fixed
+
+- Failed chat generations now leave visible error context in the conversation.
+
 ## 0.1.0 - 2026-05-06
 
 Initial pre-release candidate. See [docs/releases/v0.1.0.md](./docs/releases/v0.1.0.md) for release notes and artifact details.
