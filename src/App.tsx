@@ -2,18 +2,20 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
-import { Bot, Check, Copy, Database, Image, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2, X } from "lucide-react";
+import { Bot, Check, Copy, Database, Image, Info, KeyRound, Loader2, Plus, Search, Send, Settings, Trash2, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ChatMessage, ChatStreamEvent, Conversation, GeneratedImage, PersistedMessage, ProviderConfig, localApi } from "./tauri";
 
 type View = "chat" | "images" | "settings";
-type SettingsSection = "provider" | "chat" | "images" | "data";
+type SettingsSection = "provider" | "chat" | "images" | "data" | "about";
 
 const defaultSystemPrompt =
   "You are MuseDock Open, a concise and practical AI assistant.";
 const lastViewKey = "musedock:last-view";
 const lastSettingsSectionKey = "musedock:last-settings-section";
+const appVersion = "0.1.0";
+const releaseUrl = "https://github.com/ChenXStudio/MuseDock/releases/tag/v0.1.0";
 
 const defaultConfig: ProviderConfig = {
   id: "default",
@@ -36,7 +38,7 @@ function initialView(): View {
 
 function initialSettingsSection(): SettingsSection {
   const value = window.localStorage.getItem(lastSettingsSectionKey);
-  return value === "provider" || value === "chat" || value === "images" || value === "data"
+  return value === "provider" || value === "chat" || value === "images" || value === "data" || value === "about"
     ? value
     : "provider";
 }
@@ -903,6 +905,14 @@ export default function App() {
                 <Database size={17} />
                 Data & Privacy
               </button>
+              <button
+                className={settingsSection === "about" ? "active" : ""}
+                onClick={() => setSettingsSection("about")}
+                type="button"
+              >
+                <Info size={17} />
+                About
+              </button>
             </aside>
 
             <div className="settings-panel">
@@ -1134,6 +1144,36 @@ export default function App() {
                   </div>
                 </>
               )}
+
+              {settingsSection === "about" && (
+                <>
+                  <div className="settings-heading">
+                    <h2>About</h2>
+                    <p>MuseDock is a local-first desktop client for user-owned AI providers.</p>
+                  </div>
+                  <div className="data-list">
+                    <div>
+                      <strong>Version</strong>
+                      <span>{appVersion}</span>
+                    </div>
+                    <div>
+                      <strong>Release</strong>
+                      <div className="data-actions">
+                        <button onClick={() => copyText(releaseUrl)} type="button">Copy link</button>
+                      </div>
+                      <span>{releaseUrl}</span>
+                    </div>
+                    <div>
+                      <strong>License</strong>
+                      <span>MIT</span>
+                    </div>
+                    <div>
+                      <strong>Privacy model</strong>
+                      <span>Requests go directly to your configured Provider. API keys stay in the system keychain.</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </section>
         )}
@@ -1216,6 +1256,8 @@ function settingsDescription(section: SettingsSection) {
       return "Set simple defaults for image generation.";
     case "data":
       return "Review local files, key storage, and privacy boundaries.";
+    case "about":
+      return "Version, release, license, and project information.";
   }
 }
 

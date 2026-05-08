@@ -361,3 +361,13 @@ Acceptance:
 - Data & Privacy can clear generated image history records.
 - User can choose whether to keep image files on disk.
 - Clearing image history does not affect Provider profiles or API keys.
+
+## Task 32: About Settings Section
+
+Status: done.
+
+Acceptance:
+
+- Settings includes an About section.
+- About shows app version, release link, license, and privacy model.
+- Release link can be copied.
