@@ -12,6 +12,8 @@ type SettingsSection = "provider" | "chat" | "images" | "data";
 
 const defaultSystemPrompt =
   "You are MuseDock Open, a concise and practical AI assistant.";
+const lastViewKey = "musedock:last-view";
+const lastSettingsSectionKey = "musedock:last-settings-section";
 
 const defaultConfig: ProviderConfig = {
   id: "default",
@@ -27,9 +29,21 @@ function createId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+function initialView(): View {
+  const value = window.localStorage.getItem(lastViewKey);
+  return value === "chat" || value === "images" || value === "settings" ? value : "chat";
+}
+
+function initialSettingsSection(): SettingsSection {
+  const value = window.localStorage.getItem(lastSettingsSectionKey);
+  return value === "provider" || value === "chat" || value === "images" || value === "data"
+    ? value
+    : "provider";
+}
+
 export default function App() {
-  const [view, setView] = useState<View>("chat");
-  const [settingsSection, setSettingsSection] = useState<SettingsSection>("provider");
+  const [view, setView] = useState<View>(initialView);
+  const [settingsSection, setSettingsSection] = useState<SettingsSection>(initialSettingsSection);
   const [providers, setProviders] = useState<ProviderConfig[]>([defaultConfig]);
   const [provider, setProvider] = useState<ProviderConfig>(defaultConfig);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -131,6 +145,14 @@ export default function App() {
       })
       .catch((error) => setStatus(String(error)));
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(lastViewKey, view);
+  }, [view]);
+
+  useEffect(() => {
+    window.localStorage.setItem(lastSettingsSectionKey, settingsSection);
+  }, [settingsSection]);
 
   const upsertProviderState = (saved: ProviderConfig) => {
     const clean = { ...saved, api_key: "" };

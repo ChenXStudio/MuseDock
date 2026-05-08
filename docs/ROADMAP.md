@@ -312,3 +312,13 @@ Acceptance:
 
 - Status messages can be cleared manually.
 - Long status text remains contained in the top bar.
+
+## Task 27: Remember Last View
+
+Status: done.
+
+Acceptance:
+
+- App remembers the last main view.
+- App remembers the last settings section.
+- No prompts, API keys, or model responses are stored for this preference.
