@@ -840,6 +840,28 @@ button {
   padding: 10px 12px;
 }
 
+.secret-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 8px;
+  margin-top: 7px;
+}
+
+.secret-input input {
+  margin-top: 0;
+}
+
+.secret-input button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 41px;
+  border: 1px solid #cfd6e2;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #344054;
+}
+
 .settings-summary {
   display: grid;
   gap: 4px;

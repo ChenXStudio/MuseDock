@@ -412,3 +412,13 @@ Acceptance:
 - Stop requests cancellation through the local Rust command layer.
 - Partial streamed content is preserved in the conversation.
 - Normal send behavior returns after the request finishes or stops.
+
+## Task 37: API Key Visibility Toggle
+
+Status: done.
+
+Acceptance:
+
+- Provider settings keep API Key hidden by default.
+- User can temporarily reveal the typed API Key.
+- Saved keychain secrets are still not read back into the form.

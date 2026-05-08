@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import { Bot, Check, Copy, Database, Image, Info, KeyRound, Loader2, Plus, Search, Send, Settings, Square, Trash2, X } from "lucide-react";
+import { Bot, Check, Copy, Database, Eye, EyeOff, Image, Info, KeyRound, Loader2, Plus, Search, Send, Settings, Square, Trash2, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ChatMessage, ChatStreamEvent, Conversation, GeneratedImage, PersistedMessage, ProviderConfig, localApi } from "./tauri";
@@ -65,6 +65,7 @@ export default function App() {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [activeRequestId, setActiveRequestId] = useState<string | null>(null);
+  const [showApiKey, setShowApiKey] = useState(false);
   const [appDataDir, setAppDataDir] = useState("");
   const [exportsDir, setExportsDir] = useState("");
   const cancelledRequestIds = useRef<Set<string>>(new Set());
@@ -1055,12 +1056,21 @@ export default function App() {
                   </label>
                   <label>
                     API Key
-                    <input
-                      value={provider.api_key}
-                      onChange={(event) => setProvider({ ...provider, api_key: event.target.value })}
-                      type="password"
-                      placeholder={provider.has_api_key ? "Saved in system keychain" : "sk-..."}
-                    />
+                    <div className="secret-input">
+                      <input
+                        value={provider.api_key}
+                        onChange={(event) => setProvider({ ...provider, api_key: event.target.value })}
+                        type={showApiKey ? "text" : "password"}
+                        placeholder={provider.has_api_key ? "Saved in system keychain" : "sk-..."}
+                      />
+                      <button
+                        onClick={() => setShowApiKey((current) => !current)}
+                        title={showApiKey ? "Hide API key" : "Show API key"}
+                        type="button"
+                      >
+                        {showApiKey ? <EyeOff size={17} /> : <Eye size={17} />}
+                      </button>
+                    </div>
                   </label>
                   {provider.has_api_key && !provider.api_key && (
                     <p className="key-status">已保存的 API Key 不会明文回填。输入新 Key 可覆盖。</p>
