@@ -34,6 +34,7 @@ export default function App() {
   const [provider, setProvider] = useState<ProviderConfig>(defaultConfig);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [expandedConversationId, setExpandedConversationId] = useState<string | null>(null);
   const [conversationSearch, setConversationSearch] = useState("");
   const [input, setInput] = useState("");
   const [imagePrompt, setImagePrompt] = useState("");
@@ -547,15 +548,30 @@ export default function App() {
                 >
                   {conversation.title}
                 </button>
-                <button className="conversation-action" onClick={() => renameConversation(conversation)}>
-                  Rename
+                <button
+                  className="conversation-action-toggle"
+                  onClick={() =>
+                    setExpandedConversationId((current) =>
+                      current === conversation.id ? null : conversation.id,
+                    )
+                  }
+                  type="button"
+                >
+                  More
                 </button>
-                <button className="conversation-action" onClick={() => exportConversation(conversation)}>
-                  Export
-                </button>
-                <button className="conversation-action danger-text" onClick={() => deleteConversation(conversation)}>
-                  Delete
-                </button>
+                {expandedConversationId === conversation.id && (
+                  <div className="conversation-actions">
+                    <button onClick={() => renameConversation(conversation)} type="button">
+                      Rename
+                    </button>
+                    <button onClick={() => exportConversation(conversation)} type="button">
+                      Export
+                    </button>
+                    <button className="danger-text" onClick={() => deleteConversation(conversation)} type="button">
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

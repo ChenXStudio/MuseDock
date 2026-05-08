@@ -181,7 +181,8 @@ button {
 }
 
 .conversation-title,
-.conversation-action {
+.conversation-action-toggle,
+.conversation-actions button {
   border: 0;
   background: transparent;
   text-align: left;
@@ -197,13 +198,36 @@ button {
   white-space: nowrap;
 }
 
-.conversation-action {
+.conversation-action-toggle {
   padding: 0;
   color: #667085;
   font-size: 12px;
+  font-weight: 700;
 }
 
-.conversation-action:hover,
+.conversation-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.conversation-actions button {
+  overflow: hidden;
+  min-height: 28px;
+  padding: 0 6px;
+  border-radius: 6px;
+  color: #667085;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-actions button:hover {
+  background: #edf4ff;
+  color: #174ea6;
+}
+
+.conversation-action-toggle:hover,
 .danger-text:hover {
   text-decoration: underline;
 }

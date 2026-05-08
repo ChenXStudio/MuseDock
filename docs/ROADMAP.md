@@ -265,3 +265,13 @@ Acceptance:
 - Reuse action copies the previous prompt into the generator.
 - Reuse action restores the previous model and size.
 - Existing image history is unchanged.
+
+## Task 22: Compact Conversation Actions
+
+Status: done.
+
+Acceptance:
+
+- Conversation list shows a cleaner default item state.
+- Rename, export, and delete actions are grouped behind a More toggle.
+- Existing conversation actions still work.
