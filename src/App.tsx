@@ -43,6 +43,7 @@ export default function App() {
   const [imageSaveDir, setImageSaveDir] = useState("");
   const [usingDefaultImageDir, setUsingDefaultImageDir] = useState(true);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [imageSearch, setImageSearch] = useState("");
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
@@ -75,6 +76,19 @@ export default function App() {
     () => generatedImages.find((image) => image.id === selectedImageId) || null,
     [generatedImages, selectedImageId],
   );
+  const filteredImages = useMemo(() => {
+    const query = imageSearch.trim().toLowerCase();
+    if (!query) return generatedImages;
+    return generatedImages.filter((image) =>
+      [
+        image.file_name,
+        image.prompt,
+        image.model,
+        image.size,
+        image.path,
+      ].some((value) => value.toLowerCase().includes(query)),
+    );
+  }, [generatedImages, imageSearch]);
   const pageTitle =
     view === "chat" ? "Chat" : view === "images" ? "Images" : "Settings";
   const pageDescription =
@@ -666,15 +680,31 @@ export default function App() {
               </button>
             </form>
 
-            <div className="image-results">
+            <section className="image-history">
+              <label className="image-search">
+                <Search size={15} />
+                <input
+                  aria-label="Search generated images"
+                  onChange={(event) => setImageSearch(event.target.value)}
+                  placeholder="Search images"
+                  value={imageSearch}
+                />
+              </label>
+              <div className="image-results">
               {generatedImages.length === 0 ? (
                 <div className="empty image-empty">
                   <Image size={36} />
                   <h2>生成图片会保存到本机</h2>
                   <p>Provider 返回 URL 时会先下载，返回 base64 时会直接解码保存。</p>
                 </div>
+              ) : filteredImages.length === 0 ? (
+                <div className="empty image-empty">
+                  <Search size={36} />
+                  <h2>No matching images</h2>
+                  <p>Try searching by prompt, model, file name, or path.</p>
+                </div>
               ) : (
-                generatedImages.map((image) => (
+                filteredImages.map((image) => (
                   <article className="image-card" key={image.id}>
                     <button
                       className="image-preview-button"
@@ -706,7 +736,8 @@ export default function App() {
                   </article>
                 ))
               )}
-            </div>
+              </div>
+            </section>
           </section>
         ) : (
           <section className="settings-layout">

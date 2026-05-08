@@ -425,6 +425,38 @@ button {
   gap: 2px;
 }
 
+.image-history {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-search {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #667085;
+}
+
+.image-search input {
+  min-width: 0;
+  height: 38px;
+  border: 0;
+  background: transparent;
+  color: #344054;
+  outline: none;
+}
+
+.image-search input::placeholder {
+  color: #98a2b3;
+}
+
 .image-results {
   min-height: 0;
   overflow: auto;

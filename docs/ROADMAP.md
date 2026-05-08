@@ -244,3 +244,13 @@ Acceptance:
 - Partial streamed content is preserved when a stream fails.
 - The top status still shows the provider error.
 - Image generation failures do not modify existing image history.
+
+## Task 20: Image History Search
+
+Status: done.
+
+Acceptance:
+
+- Images page has a simple image history search field.
+- Search matches prompt, model, file name, size, and path.
+- Empty search results are shown without changing image history.
