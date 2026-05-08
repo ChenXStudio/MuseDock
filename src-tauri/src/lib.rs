@@ -20,6 +20,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::get_app_data_dir,
+            commands::get_exports_dir,
+            commands::open_local_path,
             commands::load_provider_config,
             commands::load_provider_configs,
             commands::save_provider_config,

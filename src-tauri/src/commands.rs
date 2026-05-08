@@ -5,6 +5,7 @@ use keyring::Entry;
 use reqwest::{header, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, State};
 
@@ -160,6 +161,35 @@ fn default_image_count() -> u8 {
 #[tauri::command]
 pub fn get_app_data_dir(state: State<AppState>) -> String {
     state.app_data_dir.to_string_lossy().to_string()
+}
+
+#[tauri::command]
+pub async fn get_exports_dir(state: State<'_, AppState>) -> Result<String, String> {
+    tokio::fs::create_dir_all(state.exports_dir())
+        .await
+        .map_err(|err| format!("创建导出目录失败: {err}"))?;
+    Ok(state.exports_dir().to_string_lossy().to_string())
+}
+
+#[tauri::command]
+pub fn open_local_path(path: String) -> Result<(), String> {
+    let path = path.trim();
+    if path.is_empty() {
+        return Err("路径不能为空".to_string());
+    }
+
+    #[cfg(target_os = "macos")]
+    let result = Command::new("open").arg(path).spawn();
+
+    #[cfg(target_os = "windows")]
+    let result = Command::new("explorer").arg(path).spawn();
+
+    #[cfg(all(unix, not(target_os = "macos")))]
+    let result = Command::new("xdg-open").arg(path).spawn();
+
+    result
+        .map(|_| ())
+        .map_err(|err| format!("打开路径失败: {err}"))
 }
 
 #[tauri::command]

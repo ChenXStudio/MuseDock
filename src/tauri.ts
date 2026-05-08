@@ -72,6 +72,8 @@ export interface ImageSettings {
 
 export const localApi = {
   getAppDataDir: () => invoke<string>("get_app_data_dir"),
+  getExportsDir: () => invoke<string>("get_exports_dir"),
+  openLocalPath: (path: string) => invoke<void>("open_local_path", { path }),
   loadProviderConfig: () => invoke<ProviderConfig>("load_provider_config"),
   loadProviderConfigs: () => invoke<ProviderConfig[]>("load_provider_configs"),
   saveProviderConfig: (config: ProviderConfig) =>

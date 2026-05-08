@@ -322,3 +322,23 @@ Acceptance:
 - App remembers the last main view.
 - App remembers the last settings section.
 - No prompts, API keys, or model responses are stored for this preference.
+
+## Task 28: Local Folder Shortcuts
+
+Status: done.
+
+Acceptance:
+
+- Data & Privacy can open the app data folder.
+- Data & Privacy can open the exports folder.
+- Data & Privacy can open the current image save folder.
+- Folder paths can still be copied.
+
+## Task 29: Open Generated Image File
+
+Status: done.
+
+Acceptance:
+
+- Image detail view can open the generated image file in the operating system.
+- Existing copy path and delete actions remain available.

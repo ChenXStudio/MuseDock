@@ -63,6 +63,7 @@ export default function App() {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [appDataDir, setAppDataDir] = useState("");
+  const [exportsDir, setExportsDir] = useState("");
 
   const canChat = useMemo(
     () =>
@@ -126,6 +127,10 @@ export default function App() {
       .getAppDataDir()
       .then(setAppDataDir)
       .catch(() => setAppDataDir(""));
+    localApi
+      .getExportsDir()
+      .then(setExportsDir)
+      .catch(() => setExportsDir(""));
     localApi
       .loadConversations()
       .then((items) => {
@@ -424,6 +429,15 @@ export default function App() {
   const copyText = async (text: string) => {
     await navigator.clipboard.writeText(text);
     setStatus("已复制");
+  };
+
+  const openLocalPath = async (path: string) => {
+    if (!path.trim()) return;
+    try {
+      await localApi.openLocalPath(path);
+    } catch (error) {
+      setStatus(String(error));
+    }
   };
 
   const generateImages = async (event: FormEvent<HTMLFormElement>) => {
@@ -985,6 +999,9 @@ export default function App() {
                       <button onClick={chooseImageSaveDir} disabled={busy} type="button">
                         Choose folder
                       </button>
+                      <button onClick={() => openLocalPath(imageSaveDir)} disabled={!imageSaveDir} type="button">
+                        Open folder
+                      </button>
                       <button onClick={resetImageSaveDir} disabled={busy || usingDefaultImageDir} type="button">
                         Use default
                       </button>
@@ -1033,8 +1050,19 @@ export default function App() {
                   <div className="data-list">
                     <div>
                       <strong>App data directory</strong>
-                      <button onClick={() => copyText(appDataDir)} type="button">Copy path</button>
+                      <div className="data-actions">
+                        <button onClick={() => copyText(appDataDir)} type="button">Copy path</button>
+                        <button onClick={() => openLocalPath(appDataDir)} type="button">Open</button>
+                      </div>
                       <span title={appDataDir}>{appDataDir || "Not resolved yet"}</span>
+                    </div>
+                    <div>
+                      <strong>Exports</strong>
+                      <div className="data-actions">
+                        <button onClick={() => copyText(exportsDir)} type="button">Copy path</button>
+                        <button onClick={() => openLocalPath(exportsDir)} type="button">Open</button>
+                      </div>
+                      <span title={exportsDir}>{exportsDir || "Not resolved yet"}</span>
                     </div>
                     <div>
                       <strong>Provider profiles</strong>
@@ -1050,6 +1078,10 @@ export default function App() {
                     </div>
                     <div>
                       <strong>Generated images</strong>
+                      <div className="data-actions">
+                        <button onClick={() => copyText(imageSaveDir)} type="button">Copy folder</button>
+                        <button onClick={() => openLocalPath(imageSaveDir)} type="button">Open</button>
+                      </div>
                       <span>{generatedImages.length} local image record{generatedImages.length === 1 ? "" : "s"}. New files save to {imageSaveDir || "the default image folder"}.</span>
                     </div>
                   </div>
@@ -1103,6 +1135,10 @@ export default function App() {
                 <button onClick={() => copyText(selectedImage.path)} type="button">
                   <Copy size={14} />
                   Copy path
+                </button>
+                <button onClick={() => openLocalPath(selectedImage.path)} type="button">
+                  <Image size={14} />
+                  Open file
                 </button>
                 <button className="danger" disabled={busy} onClick={() => deleteGeneratedImage(selectedImage)} type="button">
                   <Trash2 size={14} />
