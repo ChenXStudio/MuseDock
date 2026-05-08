@@ -512,7 +512,7 @@ export default function App() {
           </button>
           <button className={view === "settings" ? "active" : ""} onClick={() => setView("settings")}>
             <Settings size={18} />
-            Provider
+            Settings
           </button>
         </nav>
 
@@ -579,6 +579,10 @@ export default function App() {
 
         <div className="sidebar-footer">
           <div className="meta-row">
+            <Bot size={15} />
+            <span title={provider.name}>{provider.name || "No provider selected"}</span>
+          </div>
+          <div className="meta-row">
             <KeyRound size={15} />
             {provider.has_api_key || provider.api_key ? "API key configured" : "API key missing"}
           </div>
@@ -606,6 +610,19 @@ export default function App() {
                   <Bot size={36} />
                   <h2>开始一个本地对话</h2>
                   <p>配置 Provider 后即可提问。会话会保存到本机数据目录。</p>
+                  {!canChat && (
+                    <div className="empty-actions">
+                      <button
+                        onClick={() => {
+                          setSettingsSection("provider");
+                          setView("settings");
+                        }}
+                        type="button"
+                      >
+                        Provider settings
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
               {messages.map((message) => (
@@ -712,6 +729,23 @@ export default function App() {
                   <Image size={36} />
                   <h2>生成图片会保存到本机</h2>
                   <p>Provider 返回 URL 时会先下载，返回 base64 时会直接解码保存。</p>
+                  <div className="empty-actions">
+                    {provider.has_api_key || provider.api_key ? (
+                      <button onClick={chooseImageSaveDir} type="button">
+                        Choose folder
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setSettingsSection("provider");
+                          setView("settings");
+                        }}
+                        type="button"
+                      >
+                        Provider settings
+                      </button>
+                    )}
+                  </div>
                 </div>
               ) : filteredImages.length === 0 ? (
                 <div className="empty image-empty">

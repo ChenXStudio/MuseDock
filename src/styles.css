@@ -310,6 +310,27 @@ button {
   color: #17191f;
 }
 
+.empty-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.empty-actions button {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid #cfd6e2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #174ea6;
+  font-weight: 700;
+}
+
+.empty-actions button:hover {
+  background: #edf4ff;
+}
+
 .message {
   max-width: 820px;
   margin: 0 auto 14px;

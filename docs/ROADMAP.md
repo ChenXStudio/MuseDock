@@ -275,3 +275,31 @@ Acceptance:
 - Conversation list shows a cleaner default item state.
 - Rename, export, and delete actions are grouped behind a More toggle.
 - Existing conversation actions still work.
+
+## Task 23: Clear Settings Navigation
+
+Status: done.
+
+Acceptance:
+
+- Main navigation uses `Settings` for the settings area.
+- Provider setup remains the first settings section.
+
+## Task 24: Empty State Shortcuts
+
+Status: done.
+
+Acceptance:
+
+- Chat empty state links to Provider settings when chat is not ready.
+- Images empty state links to Provider settings when API key is missing.
+- Images empty state can open folder selection when Provider is ready.
+
+## Task 25: Sidebar Provider Visibility
+
+Status: done.
+
+Acceptance:
+
+- Sidebar footer shows the active Provider name.
+- API key status remains visible.
