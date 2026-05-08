@@ -303,3 +303,12 @@ Acceptance:
 
 - Sidebar footer shows the active Provider name.
 - API key status remains visible.
+
+## Task 26: Dismissible Status Messages
+
+Status: done.
+
+Acceptance:
+
+- Status messages can be cleared manually.
+- Long status text remains contained in the top bar.

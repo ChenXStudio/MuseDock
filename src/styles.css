@@ -277,12 +277,36 @@ button {
 }
 
 .status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   max-width: 420px;
   padding: 8px 10px;
   border-radius: 8px;
   background: #eef6ff;
   color: #174ea6;
   font-size: 13px;
+}
+
+.status span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status button {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #174ea6;
+}
+
+.status button:hover {
+  background: #dbeafe;
 }
 
 .chat-layout {

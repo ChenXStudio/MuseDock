@@ -599,7 +599,14 @@ export default function App() {
             <h1>{pageTitle}</h1>
             <p>{pageDescription}</p>
           </div>
-          {status && <div className="status">{status}</div>}
+          {status && (
+            <div className="status">
+              <span>{status}</span>
+              <button onClick={() => setStatus("")} title="Clear status" type="button">
+                <X size={14} />
+              </button>
+            </div>
+          )}
         </header>
 
         {view === "chat" ? (
