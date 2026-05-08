@@ -371,3 +371,12 @@ Acceptance:
 - Settings includes an About section.
 - About shows app version, release link, license, and privacy model.
 - Release link can be copied.
+
+## Task 33: Image Detail Keyboard Close
+
+Status: done.
+
+Acceptance:
+
+- Esc closes the image detail view.
+- Deleting an image from detail view selects a nearby image when available.

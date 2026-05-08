@@ -161,6 +161,17 @@ export default function App() {
     window.localStorage.setItem(lastSettingsSectionKey, settingsSection);
   }, [settingsSection]);
 
+  useEffect(() => {
+    if (!selectedImageId) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedImageId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedImageId]);
+
   const upsertProviderState = (saved: ProviderConfig) => {
     const clean = { ...saved, api_key: "" };
     setProviders((current) => {
@@ -472,12 +483,17 @@ export default function App() {
 
   const deleteGeneratedImage = async (image: GeneratedImage) => {
     if (!window.confirm(`删除图片「${image.file_name}」？`)) return;
+    const currentIndex = generatedImages.findIndex((item) => item.id === image.id);
+    const nextSelectedImage =
+      generatedImages[currentIndex + 1] || generatedImages[currentIndex - 1] || null;
     setBusy(true);
     setStatus("");
     try {
       await localApi.deleteGeneratedImage(image.id);
       setGeneratedImages((current) => current.filter((item) => item.id !== image.id));
-      setSelectedImageId((current) => (current === image.id ? null : current));
+      setSelectedImageId((current) =>
+        current === image.id ? nextSelectedImage?.id || null : current,
+      );
       setStatus("图片已删除");
     } catch (error) {
       setStatus(String(error));
