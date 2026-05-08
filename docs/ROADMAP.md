@@ -452,3 +452,13 @@ Acceptance:
 - App remembers the last selected Provider locally.
 - Remembering the Provider does not store API keys or prompts.
 - Default Provider metadata is not changed by temporary switching.
+
+## Task 41: Readable Image Timestamps
+
+Status: done.
+
+Acceptance:
+
+- Image detail shows created time in a readable local format.
+- Original stored timestamp remains available as hover text.
+- Stored image history format is unchanged.

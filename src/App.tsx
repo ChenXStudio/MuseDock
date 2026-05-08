@@ -1357,7 +1357,7 @@ export default function App() {
                 <strong>Path</strong>
                 <span title={selectedImage.path}>{selectedImage.path}</span>
                 <strong>Created</strong>
-                <span>{selectedImage.created_at}</span>
+                <span title={selectedImage.created_at}>{formatTimestamp(selectedImage.created_at)}</span>
               </div>
               <div className="image-detail-actions">
                 <button
@@ -1399,6 +1399,17 @@ function makeTitle(text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
   if (!normalized) return "New chat";
   return normalized.length > 28 ? `${normalized.slice(0, 28)}...` : normalized;
+}
+
+function formatTimestamp(value: string) {
+  const numericValue = Number(value);
+  const date =
+    value.trim() && Number.isFinite(numericValue) ? new Date(numericValue) : new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
 }
 
 function settingsDescription(section: SettingsSection) {

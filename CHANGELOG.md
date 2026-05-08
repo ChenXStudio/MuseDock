@@ -30,6 +30,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Conversation item actions are grouped behind a compact More toggle.
 - Main navigation uses Settings instead of Provider.
 - Sidebar shows the active Provider name.
+- Image detail created time is displayed in a readable format.
 
 ### Fixed
 
