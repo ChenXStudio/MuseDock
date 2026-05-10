@@ -129,7 +129,7 @@ button {
 
 .conversation-search {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 7px;
   margin-bottom: 10px;
@@ -151,6 +151,24 @@ button {
 
 .conversation-search input::placeholder {
   color: #98a2b3;
+}
+
+.conversation-search button,
+.image-search button {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #667085;
+}
+
+.conversation-search button:hover,
+.image-search button:hover {
+  background: #edf4ff;
+  color: #174ea6;
 }
 
 .conversation-list {
@@ -194,6 +212,14 @@ button {
   color: #344054;
   font-size: 13px;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-time {
+  overflow: hidden;
+  color: #98a2b3;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -329,12 +355,15 @@ button {
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 22px;
+  min-width: 22px;
   height: 22px;
+  padding: 0 6px;
   border: 0;
   border-radius: 6px;
   background: transparent;
   color: #174ea6;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .status button:hover {
@@ -535,7 +564,7 @@ button {
 
 .image-search {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 7px;
   padding: 0 10px;

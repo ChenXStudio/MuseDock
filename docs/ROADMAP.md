@@ -462,3 +462,53 @@ Acceptance:
 - Image detail shows created time in a readable local format.
 - Original stored timestamp remains available as hover text.
 - Stored image history format is unchanged.
+
+## Task 42: Chat Auto Scroll
+
+Status: done.
+
+Acceptance:
+
+- Chat view scrolls to the newest message while messages change.
+- Streaming output remains visible without manual scrolling.
+- Existing composer behavior is unchanged.
+
+## Task 43: Conversation Update Times
+
+Status: done.
+
+Acceptance:
+
+- Conversation list shows a readable updated time.
+- Original stored timestamp remains available as hover text.
+- Conversation storage format is unchanged.
+
+## Task 44: Clear Search Controls
+
+Status: done.
+
+Acceptance:
+
+- Conversation search can be cleared in one click.
+- Image history search can be cleared in one click.
+- Clearing search does not modify stored conversations or image history.
+
+## Task 45: Open Completed Exports
+
+Status: done.
+
+Acceptance:
+
+- Completed conversation exports expose an Open action in the status bar.
+- Completed backup exports expose an Open action in the status bar.
+- Export file paths are not stored as persistent preferences.
+
+## Task 46: Provider Test Readiness Check
+
+Status: done.
+
+Acceptance:
+
+- Provider Test checks required setup fields before sending a request.
+- Missing Base URL, API Key, or Chat model is reported in the status bar.
+- Test behavior is unchanged once setup is complete.

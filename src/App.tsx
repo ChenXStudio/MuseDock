@@ -64,11 +64,13 @@ export default function App() {
   const [imageSearch, setImageSearch] = useState("");
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [status, setStatus] = useState("");
+  const [statusActionPath, setStatusActionPath] = useState("");
   const [busy, setBusy] = useState(false);
   const [activeRequestId, setActiveRequestId] = useState<string | null>(null);
   const [showApiKey, setShowApiKey] = useState(false);
   const [appDataDir, setAppDataDir] = useState("");
   const [exportsDir, setExportsDir] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const cancelledRequestIds = useRef<Set<string>>(new Set());
 
   const canChat = useMemo(
@@ -175,6 +177,17 @@ export default function App() {
   }, [settingsSection]);
 
   useEffect(() => {
+    if (!status.startsWith("已导出")) {
+      setStatusActionPath("");
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (view !== "chat") return;
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, busy, view]);
+
+  useEffect(() => {
     if (!selectedImageId) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -215,6 +228,11 @@ export default function App() {
   };
 
   const testProvider = async () => {
+    const missing = providerReadiness.filter((item) => !item.ready).map((item) => item.label);
+    if (missing.length) {
+      setStatus(`Provider 还缺少: ${missing.join(", ")}`);
+      return;
+    }
     setBusy(true);
     setStatus("");
     try {
@@ -346,6 +364,7 @@ export default function App() {
     try {
       const exported = await localApi.exportConversationMarkdown(conversation);
       setStatus(`已导出: ${exported.path}`);
+      setStatusActionPath(exported.path);
     } catch (error) {
       setStatus(String(error));
     } finally {
@@ -367,6 +386,7 @@ export default function App() {
     try {
       const exported = await localApi.exportLocalBackup(selected);
       setStatus(`已导出备份: ${exported.path}`);
+      setStatusActionPath(exported.path);
     } catch (error) {
       setStatus(String(error));
     } finally {
@@ -691,14 +711,19 @@ export default function App() {
         <section className="conversation-pane">
           <button className="new-chat" onClick={newConversation}>New chat</button>
           <label className="conversation-search">
-            <Search size={15} />
-            <input
-              aria-label="Search conversations"
-              onChange={(event) => setConversationSearch(event.target.value)}
-              placeholder="Search chats"
-              value={conversationSearch}
-            />
-          </label>
+                <Search size={15} />
+                <input
+                  aria-label="Search conversations"
+                  onChange={(event) => setConversationSearch(event.target.value)}
+                  placeholder="Search chats"
+                  value={conversationSearch}
+                />
+                {conversationSearch && (
+                  <button onClick={() => setConversationSearch("")} title="Clear search" type="button">
+                    <X size={13} />
+                  </button>
+                )}
+              </label>
           <div className="conversation-list">
             {filteredConversations.length === 0 && (
               <div className="conversation-empty">
@@ -720,6 +745,9 @@ export default function App() {
                 >
                   {conversation.title}
                 </button>
+                <span className="conversation-time" title={conversation.updated_at}>
+                  {formatTimestamp(conversation.updated_at)}
+                </span>
                 <button
                   className="conversation-action-toggle"
                   onClick={() =>
@@ -791,6 +819,11 @@ export default function App() {
             {status && (
               <div className="status">
                 <span>{status}</span>
+                {statusActionPath && (
+                  <button onClick={() => openLocalPath(statusActionPath)} title="Open exported file" type="button">
+                    Open
+                  </button>
+                )}
                 <button onClick={() => setStatus("")} title="Clear status" type="button">
                   <X size={14} />
                 </button>
@@ -839,6 +872,7 @@ export default function App() {
                   Waiting for provider...
                 </div>
               )}
+              <div ref={messagesEndRef} />
             </div>
 
             <form className="composer" onSubmit={sendMessage}>
@@ -926,6 +960,11 @@ export default function App() {
                   placeholder="Search images"
                   value={imageSearch}
                 />
+                {imageSearch && (
+                  <button onClick={() => setImageSearch("")} title="Clear search" type="button">
+                    <X size={13} />
+                  </button>
+                )}
               </label>
               <div className="image-results">
               {generatedImages.length === 0 ? (

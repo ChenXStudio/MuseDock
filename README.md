@@ -9,13 +9,17 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - ChatGPT-like chat interface.
 - Streaming chat output through OpenAI-compatible `/chat/completions`.
 - Stop action for active streaming chat responses.
+- Chat view follows the newest message while streaming.
 - Markdown rendering with tables, lists, and copyable code blocks.
 - Local conversation history with create, rename, and delete actions.
+- Conversation list shows readable update times.
 - Conversation export to Markdown.
+- Completed exports can be opened from the status bar.
 - Local conversation cleanup.
 - Local JSON backup export and import without API keys.
 - Multiple provider profiles.
 - Provider setup readiness summary for required fields.
+- Provider test reports missing setup fields before sending a request.
 - Quick Provider switcher for Chat and Images.
 - Last selected Provider is remembered locally.
 - Provider-specific API keys stored in the system keychain.
@@ -23,6 +27,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - OpenAI-compatible `/images/generations` support.
 - Generated images saved to the local app data directory.
 - Generated image history persisted locally.
+- Conversation and image searches can be cleared in one click.
 - Optional custom folder for newly generated images.
 - Image history cleanup with optional local file deletion.
 

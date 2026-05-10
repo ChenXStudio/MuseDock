@@ -9,6 +9,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Settings split into Provider, Chat, Images, Data & Privacy, and About sections.
 - Conversation search.
 - Conversation Markdown export.
+- One-click clear actions for conversation and image search.
 - Configurable image save folder.
 - Image history detail preview.
 - Image history search.
@@ -22,6 +23,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Quick Provider switcher on Chat and Images views.
 - Last used Provider persistence.
 - Dismissible status messages.
+- Open action for completed exports.
 - Last view and settings section persistence.
 
 ### Changed
@@ -31,10 +33,13 @@ All notable changes to MuseDock Open will be documented in this file.
 - Main navigation uses Settings instead of Provider.
 - Sidebar shows the active Provider name.
 - Image detail created time is displayed in a readable format.
+- Conversation list now shows readable update times.
+- Chat view scrolls to the newest message during streaming.
 
 ### Fixed
 
 - Failed chat generations now leave visible error context in the conversation.
+- Provider test now reports missing setup fields before sending a request.
 
 ## 0.1.0 - 2026-05-06
 
