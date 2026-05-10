@@ -544,6 +544,39 @@ button {
   resize: vertical;
 }
 
+.image-save-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.image-save-summary span {
+  overflow: hidden;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-tool .image-save-summary button {
+  width: auto;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #cfd6e2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #174ea6;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .image-tool button {
   width: 100%;
   min-height: 42px;

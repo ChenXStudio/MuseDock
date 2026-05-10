@@ -22,6 +22,7 @@ All notable changes to MuseDock Open will be documented in this file.
 - Provider setup readiness summary.
 - Quick Provider switcher on Chat and Images views.
 - Last used Provider persistence.
+- Keyboard shortcuts for new chat and composer focus.
 - Dismissible status messages.
 - Open action for completed exports.
 - Last view and settings section persistence.
@@ -35,6 +36,8 @@ All notable changes to MuseDock Open will be documented in this file.
 - Image detail created time is displayed in a readable format.
 - Conversation list now shows readable update times.
 - Chat view scrolls to the newest message during streaming.
+- Images view shows the current save folder summary.
+- Data & Privacy shows a local data count summary.
 
 ### Fixed
 

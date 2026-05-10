@@ -71,6 +71,7 @@ export default function App() {
   const [appDataDir, setAppDataDir] = useState("");
   const [exportsDir, setExportsDir] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const cancelledRequestIds = useRef<Set<string>>(new Set());
 
   const canChat = useMemo(
@@ -329,13 +330,40 @@ export default function App() {
   };
 
   const newConversation = async () => {
+    if (busy) return;
     const conversation = buildConversation();
     upsertConversation(conversation);
     await localApi.saveConversation(conversation);
     setView("chat");
     setInput("");
     setStatus("新会话已创建");
+    window.setTimeout(() => composerRef.current?.focus(), 0);
   };
+
+  useEffect(() => {
+    if (view === "chat") {
+      window.setTimeout(() => composerRef.current?.focus(), 0);
+    }
+  }, [activeConversationId, view]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const usesCommand = event.metaKey || event.ctrlKey;
+      if (!usesCommand) return;
+      const key = event.key.toLowerCase();
+      if (key === "n") {
+        event.preventDefault();
+        void newConversation();
+      }
+      if (key === "k") {
+        event.preventDefault();
+        setView("chat");
+        window.setTimeout(() => composerRef.current?.focus(), 0);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [busy, conversations, providers, view]);
 
   const renameConversation = async (conversation: Conversation) => {
     const title = window.prompt("重命名会话", conversation.title)?.trim();
@@ -877,6 +905,7 @@ export default function App() {
 
             <form className="composer" onSubmit={sendMessage}>
               <textarea
+                ref={composerRef}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={(event) => {
@@ -904,6 +933,14 @@ export default function App() {
         ) : view === "images" ? (
           <section className="image-layout">
             <form className="image-tool" onSubmit={generateImages}>
+              <div className="image-save-summary">
+                <span title={imageSaveDir}>
+                  Save to {usingDefaultImageDir ? "default folder" : "custom folder"}
+                </span>
+                <button onClick={() => openLocalPath(imageSaveDir)} type="button">
+                  Open
+                </button>
+              </div>
               <label>
                 Prompt
                 <textarea
@@ -1276,6 +1313,14 @@ export default function App() {
                     <p>Review where MuseDock stores local data and what is kept out of normal files.</p>
                   </div>
                   <div className="data-list">
+                    <div>
+                      <strong>Local summary</strong>
+                      <span>
+                        {providers.length} provider profile{providers.length === 1 ? "" : "s"},{" "}
+                        {conversations.length} conversation{conversations.length === 1 ? "" : "s"},{" "}
+                        {generatedImages.length} image record{generatedImages.length === 1 ? "" : "s"}.
+                      </span>
+                    </div>
                     <div>
                       <strong>Local backup</strong>
                       <div className="data-actions">

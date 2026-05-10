@@ -512,3 +512,43 @@ Acceptance:
 - Provider Test checks required setup fields before sending a request.
 - Missing Base URL, API Key, or Chat model is reported in the status bar.
 - Test behavior is unchanged once setup is complete.
+
+## Task 47: Keyboard Shortcuts
+
+Status: done.
+
+Acceptance:
+
+- Cmd/Ctrl+N creates a new chat when the app is not busy.
+- Cmd/Ctrl+K opens Chat and focuses the composer.
+- Shortcuts do not store prompts, API keys, or model output.
+
+## Task 48: Composer Auto Focus
+
+Status: done.
+
+Acceptance:
+
+- New chat creation focuses the composer.
+- Selecting a conversation in Chat focuses the composer.
+- Existing send behavior is unchanged.
+
+## Task 49: Image Save Folder Summary
+
+Status: done.
+
+Acceptance:
+
+- Images view shows whether the default or custom save folder is active.
+- Images view can open the current save folder.
+- Image generation parameters remain unchanged.
+
+## Task 50: Local Data Summary
+
+Status: done.
+
+Acceptance:
+
+- Data & Privacy shows local counts for provider profiles, conversations, and image records.
+- Summary does not expose API keys or prompts beyond existing local count metadata.
+- Existing clear and backup actions remain available.

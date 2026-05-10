@@ -10,6 +10,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - Streaming chat output through OpenAI-compatible `/chat/completions`.
 - Stop action for active streaming chat responses.
 - Chat view follows the newest message while streaming.
+- Keyboard shortcuts for new chat and composer focus.
 - Markdown rendering with tables, lists, and copyable code blocks.
 - Local conversation history with create, rename, and delete actions.
 - Conversation list shows readable update times.
@@ -27,6 +28,7 @@ The app is built as a standalone Tauri desktop client with a React frontend and 
 - OpenAI-compatible `/images/generations` support.
 - Generated images saved to the local app data directory.
 - Generated image history persisted locally.
+- Images view shows the active save folder.
 - Conversation and image searches can be cleared in one click.
 - Optional custom folder for newly generated images.
 - Image history cleanup with optional local file deletion.
@@ -125,6 +127,7 @@ Files:
 - `exports/`: Markdown conversation exports.
 
 Data & Privacy can export or import a local JSON backup that includes provider metadata, conversations, generated image history, and image settings. API keys are not included.
+Data & Privacy also shows local counts for provider profiles, conversations, and image records.
 
 To reset local app data, quit the app and remove the app data directory. API keys may also need to be removed from the system keychain.
 
